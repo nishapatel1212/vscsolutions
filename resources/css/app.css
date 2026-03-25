@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.brand-image {
+    width: 500px;  /* adjust width */
+    height: auto;  /* maintain aspect ratio */
+}
