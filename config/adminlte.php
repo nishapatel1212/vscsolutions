@@ -317,12 +317,18 @@ return [
         ],
         [
             'text' => 'blog',
-            'url' => 'admin/blog',
+            'url' => 'nisha/blog',
             'can' => 'manage-blog',
         ],
         [
+            'text' => 'Dashboard',
+            'url' => 'dashboard',
+            'icon' => 'far fa-fw fa-file',
+            'label_color' => 'success',
+        ],
+        [
             'text' => 'Safety Check Report',
-            'url' => 'admin/index',
+            'url' => 'safetycheck/index',
             'icon' => 'far fa-fw fa-file',
             'label_color' => 'success',
         ],

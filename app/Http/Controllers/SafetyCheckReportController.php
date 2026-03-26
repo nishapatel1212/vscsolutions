@@ -49,12 +49,12 @@ class SafetyCheckReportController extends Controller
                 ->make(true);
         }
 
-        return view('admin.safety_check_report.index');
+        return view('admin_panel.safety_check_report.index');
     }
 
     public function create()
     {
-        return view('admin.safety_check_report.create');
+        return view('admin_panel.safety_check_report.create');
     }
 
     public function store(Request $request)
@@ -79,7 +79,7 @@ class SafetyCheckReportController extends Controller
     public function edit($id)
     {
         $report = SafetyCheckReport::findOrFail($id);
-        return view('admin.property_reports.edit', compact('report'));
+        return view('admin_panel.property_reports.edit', compact('report'));
     }
 
     public function update(Request $request, $id)
@@ -99,7 +99,7 @@ class SafetyCheckReportController extends Controller
     {
         $data = SafetyCheckReport::findOrFail($id);
 
-        $pdf = Pdf::loadView('admin.safety_check_report.pdf', compact('data'))
+        $pdf = Pdf::loadView('admin_panel.safety_check_report.pdf', compact('data'))
             ->setPaper('A4', 'portrait');
 
         // return $pdf->download('safety-check-report-' . $id . '.pdf');
