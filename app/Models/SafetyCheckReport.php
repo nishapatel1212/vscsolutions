@@ -12,6 +12,13 @@ class SafetyCheckReport extends Model
     protected $fillable = [
         'address',
         'report_date',
-        'details'
+        'previous_safety_date',
+        'details',
+        'safety_check_status'
     ];
+
+    public function faults()
+    {
+        return $this->hasMany(Fault::class, 'report_id');
+    }
 }

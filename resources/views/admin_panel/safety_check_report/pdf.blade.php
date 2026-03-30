@@ -35,7 +35,7 @@
         }
 
         .section-header {
-            background: #503ade;
+            background: #d1c516;
             color: #fff;
             padding: 8px;
             font-weight: bold;
@@ -105,10 +105,10 @@
 </head>
 
 <body>
-    <div class="first-page">
-        <img src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="VSC Solutions Logo">
+    {{-- <div class="first-page">
+        <img src="{{ asset('images/logo/vaishu_logo.png') }}" alt="VSC Solutions Logo">
         <h1>Electrical Safety &amp; Compliance Report</h1>
-    </div>
+    </div> --}}
 
     <div class="container">
 
@@ -136,8 +136,8 @@
             <table>
                 <tr>
                     <td>Electrical Safety Check</td>
-                    <td class="text-center">
-                        {{ $data->details ?? 'Faults Identified' }}
+                    <td text-align="right">
+                        <strong> {{ $data->safety_check_status ?? 'Faults Identified' }} </strong>
                     </td>
                 </tr>
             </table>
@@ -172,23 +172,34 @@
                     <th>Assessment</th>
                 </tr>
 
-                <tr>
-                    <td>Loose fitting - resecure / refix [E045]</td>
-                    <td>Re-secure fitting (GPO/light/switch/smoke alarm etc.)</td>
-                    <td class="text-center">No</td>
-                    <td class="text-danger">Non Compliant</td>
-                </tr>
-
-                <tr>
-                    <td>Socket-outlet faulty or cracked [E066]</td>
-                    <td>Socket-outlet replacement</td>
-                    <td class="text-center">No</td>
-                    <td class="text-danger">Non Compliant</td>
-                </tr>
+                @if (!empty($data->faults))
+                    @foreach($data->faults as $index => $fault)
+                        <tr>
+                            <td>{{ $fault->fault ?? '' }}</td>
+                            <td>{{ $fault->required_rectification ?? '' }}</td>
+                            <td>{{ $fault->repair_completed ?? '' }}</td>
+                            <td>{{ $fault->assessment ?? '' }}</td>
+                        </tr>
+                    @endforeach
+                @endif
 
             </table>
         </div>
 
+        <!-- DETAILS -->
+        <div class="section">
+            <div class="section-header">A. Installation Address</div>
+            <table>
+                <tr>
+                    <td class="label">Address:</td>
+                    <td class="value">{{ $data->address }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Date of previous Safety Check (if any) (Not Sure):</td>
+                    <td class="value">{{ !empty($data->previous_safety_date) ? \Carbon\Carbon::parse($data->previous_safety_date)->format('M d, Y') : '' }}</td>
+                </tr>
+            </table>
+        </div>
 
     </div>
 

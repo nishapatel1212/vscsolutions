@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('safety_check_reports', function (Blueprint $table) {
+        Schema::create('faults', function (Blueprint $table) {
             $table->id();
-            $table->string('address');
-            $table->date('report_date');
-            $table->string('safety_check_status');
-            $table->text('details')->nullable();
+            $table->foreignId('report_id')->constrained()->onDelete('cascade');
+            $table->text('fault');
+            $table->text('required_rectification')->nullable();
+            $table->boolean('repair_completed')->default(0);
+            $table->text('assessment')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('safety_check_reports');
+        Schema::dropIfExists('faults');
     }
 };

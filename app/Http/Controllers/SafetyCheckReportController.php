@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fault;
 use App\Models\SafetyCheckReport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -63,13 +64,32 @@ class SafetyCheckReportController extends Controller
             'address' => 'required|string|max:255',
             'report_date' => 'required|date',
             'details' => 'nullable|string',
+            'safety_check_status' => 'required|string|max:255',
         ]);
 
-        SafetyCheckReport::create([
+        $report = SafetyCheckReport::create([
             'address' => $request->address,
             'report_date' => $request->report_date,
+            'previous_safety_date' => $request->previous_safety_date,
             'details' => $request->details,
+            'safety_check_status' => $request->safety_check_status,
         ]);
+
+        // 2️⃣ Store Multiple Faults
+        if ($request->has('faults')) {
+            $faults = $request->faults;
+
+            foreach ($faults['fault_name'] as $index => $faultName) {
+                Fault::create([
+                    'report_id' => $report->id,
+                    'fault' => $faultName,
+                    'required_rectification' => $faults['required_rectification'][$index] ?? null,
+                    'repair_completed' => $faults['repair_completed'][$index] ?? 0,
+                    'assessment' => $faults['assessment'][$index] ?? null,
+                ]);
+            }
+        }
+       
 
         return redirect()
             ->route('safetycheckreport.index')
@@ -78,15 +98,71 @@ class SafetyCheckReportController extends Controller
 
     public function edit($id)
     {
-        $report = SafetyCheckReport::findOrFail($id);
-        return view('admin_panel.property_reports.edit', compact('report'));
+        $data = SafetyCheckReport::findOrFail($id);
+        return view('admin_panel.safety_check_report.create', compact('data'));
     }
 
-    public function update(Request $request, $id)
+   public function update(Request $request)
     {
+        $id = $request->id ?? '';
+
+        $request->validate([
+            'address' => 'required|string|max:255',
+            'report_date' => 'required|date',
+            'details' => 'nullable|string',
+            'safety_check_status' => 'required|string|max:255',
+
+            'faults.id.*' => 'nullable|exists:faults,id', // optional, only if updating existing fault
+            'faults.fault_name.*' => 'required|string',
+            'faults.required_rectification.*' => 'required|string',
+            'faults.repair_completed.*' => 'required|in:0,1',
+            'faults.assessment.*' => 'nullable|string',
+        ]);
+
+        // 1️⃣ Update Report
         $report = SafetyCheckReport::findOrFail($id);
-        $report->update($request->all());
-        return redirect()->route('property-reports.index')->with('success', 'Updated Successfully');
+
+        $report->update([
+            'address' => $request->address,
+            'report_date' => $request->report_date,
+            'previous_safety_date' => $request->previous_safety_date,
+            'details' => $request->details,
+            'safety_check_status' => $request->safety_check_status,
+        ]);
+
+        // 2️⃣ Update or create faults
+        if ($request->has('faults')) {
+            $faults = $request->faults;
+
+            foreach ($faults['fault_name'] as $index => $faultName) {
+                $faultId = $faults['id'][$index] ?? null;
+
+                if ($faultId) {
+                    // Update existing fault
+                    $fault = $report->faults()->find($faultId);
+                    if ($fault) {
+                        $fault->update([
+                            'fault' => $faultName,
+                            'required_rectification' => $faults['required_rectification'][$index] ?? null,
+                            'repair_completed' => $faults['repair_completed'][$index] ?? 0,
+                            'assessment' => $faults['assessment'][$index] ?? null,
+                        ]);
+                    }
+                } else {
+                    // Create new fault
+                    $report->faults()->create([
+                        'fault' => $faultName,
+                        'required_rectification' => $faults['required_rectification'][$index] ?? null,
+                        'repair_completed' => $faults['repair_completed'][$index] ?? 0,
+                        'assessment' => $faults['assessment'][$index] ?? null,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()
+            ->route('safetycheckreport.index')
+            ->with('success', 'Updated Successfully');
     }
 
     public function destroy($id)
