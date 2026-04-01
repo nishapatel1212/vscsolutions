@@ -42,6 +42,7 @@ Route::middleware(['auth'])->prefix('safetycheck')->group(function () {
     Route::post('/update', [SafetyCheckReportController::class, 'update'])->name('safetycheckreport.update');
     Route::post('/destroy', [SafetyCheckReportController::class, 'destroy'])->name('safetycheckreport.destroy');
     Route::get('safetcheck-reports/{id}/pdf', [SafetyCheckReportController::class, 'downloadPdf'])->name('safetycheckreport.pdf');
+    Route::post('/inspection-items', [SafetyCheckReportController::class, 'addInspectionItem'])->name('inspection-items.store');
 });
 
 require __DIR__ . '/auth.php';

@@ -6,6 +6,19 @@
 <h1>Create Safety Check Report</h1>
 @endsection
 
+@section('css')
+<style>
+    .big-checkbox {
+        transform: scale(1.8);
+        margin-right: 10px;
+    }
+
+    .form-check-label {
+        margin-left : 10px;
+    }
+</style>
+@endsection
+
 @section('content')
 
 <form action="{{ !empty($data) ? route('safetycheckreport.update') : route('safetycheckreport.store') }}" method="POST">
@@ -37,7 +50,7 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Date of previous Safety Check (if any):</label>
-                    <input type="date" name="previous_safety_date" class="form-control @error('previous_safety_date') is-invalid @enderror" value="{{ old('previous_safety_date', $data->previous_safety_date) }}">
+                    <input type="date" name="previous_safety_date" class="form-control @error('previous_safety_date') is-invalid @enderror" value="{{ $data->previous_safety_date ?? old('previous_safety_date') }}">
                     @error('previous_safety_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
                 
@@ -128,6 +141,46 @@
         </div>
     </div>
 
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-white">
+            <strong>Extent Of The Installation And Limitations Of The Inspection And Testing</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                @foreach($inspection_items as $item)
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input type="checkbox"
+                                name="inspection_items[]"
+                                value="{{ $item->id }}"
+                                class="form-check-input big-checkbox"
+                                id="item{{ $item->id }}"
+                                {{ isset($data) && $data->inspectionItems->contains($item->id) ? 'checked' : '' }}>
+
+                            <label class="form-check-label" for="item{{ $item->id }}">
+                                {{ $item->name }}
+                            </label>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <hr>
+
+            <!-- ADD NEW ITEM -->
+            <div class="mt-3">
+                <label>Add New Item</label>
+                <div class="d-flex">
+                    <input type="text" id="newItemName" class="form-control me-2" placeholder="Enter new item">
+                    <button type="button" class="btn btn-primary" onclick="addNewItem()">Add</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a href="{{ route('safetycheckreport.index') }}" class="btn btn-secondary">Back</a>
 
@@ -156,6 +209,29 @@
             $(this).closest('tr').remove();
         }
     });
+
+    // add new inspection item
+    function addNewItem() {
+        let name = document.getElementById('newItemName').value;
+
+        if (!name) {
+            alert('Enter item name');
+            return;
+        }
+
+        fetch("{{ route('inspection-items.store') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ name: name })
+        })
+        .then(res => res.json())
+        .then(data => {
+            location.reload(); // reload to show new checkbox
+        });
+    }
 </script>
 
 @endsection

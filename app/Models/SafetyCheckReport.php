@@ -21,4 +21,9 @@ class SafetyCheckReport extends Model
     {
         return $this->hasMany(Fault::class, 'report_id');
     }
+
+    public function inspectionItems()
+    {
+        return $this->belongsToMany(InspectionItem::class, 'report_inspection_items');
+    }
 }

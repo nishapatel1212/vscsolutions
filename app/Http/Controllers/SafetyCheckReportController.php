@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fault;
+use App\Models\InspectionItem;
 use App\Models\SafetyCheckReport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class SafetyCheckReportController extends Controller
@@ -55,7 +57,8 @@ class SafetyCheckReportController extends Controller
 
     public function create()
     {
-        return view('admin_panel.safety_check_report.create');
+        $inspection_items = InspectionItem::all();
+        return view('admin_panel.safety_check_report.create', compact('inspection_items'));
     }
 
     public function store(Request $request)
@@ -89,7 +92,9 @@ class SafetyCheckReportController extends Controller
                 ]);
             }
         }
-       
+
+        // attach selected items
+        $report->inspectionItems()->sync($request->inspection_items ?? []);
 
         return redirect()
             ->route('safetycheckreport.index')
@@ -98,11 +103,12 @@ class SafetyCheckReportController extends Controller
 
     public function edit($id)
     {
+        $inspection_items = InspectionItem::all();
         $data = SafetyCheckReport::findOrFail($id);
-        return view('admin_panel.safety_check_report.create', compact('data'));
+        return view('admin_panel.safety_check_report.create', compact('data', 'inspection_items'));
     }
 
-   public function update(Request $request)
+    public function update(Request $request)
     {
         $id = $request->id ?? '';
 
@@ -119,7 +125,7 @@ class SafetyCheckReportController extends Controller
             'faults.assessment.*' => 'nullable|string',
         ]);
 
-        // 1️⃣ Update Report
+        // 1️⃣ Update main Report
         $report = SafetyCheckReport::findOrFail($id);
 
         $report->update([
@@ -160,6 +166,9 @@ class SafetyCheckReportController extends Controller
             }
         }
 
+        // inspection item
+        $report->inspectionItems()->sync($request->inspection_items ?? []);
+
         return redirect()
             ->route('safetycheckreport.index')
             ->with('success', 'Updated Successfully');
@@ -180,5 +189,15 @@ class SafetyCheckReportController extends Controller
 
         // return $pdf->download('safety-check-report-' . $id . '.pdf');
         return $pdf->stream('safety-check-report-' . $id . '.pdf');
+    }
+
+    public function addInspectionItem(Request $request)
+    {
+        $item = InspectionItem::create([
+            'name' => $request->name,
+            'key' => Str::slug($request->name),
+        ]);
+
+        return response()->json($item);
     }
 }
