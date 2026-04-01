@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('faults', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->constrained()->onDelete('cascade');
+            $table->foreignId('report_id')->constrained('safety_check_reports')->onDelete('cascade');
             $table->text('fault');
             $table->text('required_rectification')->nullable();
             $table->boolean('repair_completed')->default(0);
