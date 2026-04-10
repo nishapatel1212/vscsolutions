@@ -310,48 +310,45 @@
         </div>
 
         <div class="card-body">
-                <div id="image-wrapper">
-                    <!-- First Row -->
-                    <div class="row g-3 align-items-center image-row mb-3 p-2 border rounded">
+            <div id="image-wrapper">
+                <!-- First Row -->
+                <div class="row g-3 align-items-center image-row mb-3 p-2 border rounded">
 
-                        <div class="col-md-4">
-                            <label class="form-label">Image Title</label>
-                            <input type="text" name="images[0][title]" class="form-control" placeholder="e.g Front View">
-                        </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Image Title</label>
+                        <input type="text" name="images[0][title]" class="form-control">
+                    </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label">Choose Image</label>
-                            <input type="file"
-                                name="images[0][file]"
-                                class="form-control image-input"
-                                accept="image/*">
-                        </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Choose Image</label>
+                        <input type="file"
+                            name="images[0][file]"
+                            class="form-control image-input"
+                            accept="image/*">
+                    </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Preview</label>
-                            <img src=""
-                                class="img-thumbnail preview-img"
-                                style="height:80px; display:none;">
-                        </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Preview</label>
+                        <img src=""
+                            class="img-thumbnail preview-img"
+                            style="height:300px; display:none;">
+                    </div>
 
-                        <div class="col-md-1 text-end">
-                            <button type="button" class="btn btn-danger remove-row mt-4">
-                                ✕
-                            </button>
-                        </div>
+                    <div class="col-md-1 text-end">
+                        <button type="button" class="btn btn-danger remove-row mt-4">
+                            ✕
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Buttons -->
-                <div class="d-flex justify-content-between mt-3">
-                    <button type="button" id="add-more" class="btn btn-secondary">
-                        + Add More Images
-                    </button>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button" id="add-more" class="btn btn-secondary">
+                    + Add More Images
+                </button>
 
-                    <button type="submit" class="btn btn-success">
-                        Save Images
-                    </button>
-                </div>
+            </div>
         </div>
     </div>
 
@@ -544,6 +541,63 @@
             document.getElementById('newEarthItemName').value = '';
         });
     }
+
+    // image preview
+    document.addEventListener('change', function (e) {
+        if (e.target.classList.contains('image-input')) {
+
+            let reader = new FileReader();
+            let img = e.target.closest('.image-row').querySelector('.preview-img');
+
+            reader.onload = function (event) {
+                img.src = event.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    let index = 1;
+
+    /* Image - ADD MORE ROW */
+    document.getElementById('add-more').addEventListener('click', function () {
+
+        let html = `
+        <div class="row g-3 align-items-center image-row mb-3 p-2 border rounded">
+
+            <div class="col-md-4">
+                <input type="text" name="images[${index}][title]" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+                <input type="file"
+                    name="images[${index}][file]"
+                    class="form-control image-input"
+                    accept="image/*">
+            </div>
+
+            <div class="col-md-3">
+                <img src="" class="img-thumbnail preview-img" style="height:80px; display:none;">
+            </div>
+
+            <div class="col-md-1 text-end">
+                <button type="button" class="btn btn-danger remove-row">✕</button>
+            </div>
+
+        </div>`;
+
+        document.getElementById('image-wrapper').insertAdjacentHTML('beforeend', html);
+        index++;
+    });
+
+
+    /* Image - REMOVE ROW */
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-row')) {
+            e.target.closest('.image-row').remove();
+        }
+    });
+
 </script>
 
 @endsection
