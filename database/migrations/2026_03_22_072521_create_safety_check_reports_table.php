@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('address');
             $table->date('report_date');
+            $table->date('previous_safety_date')->nullable();
             $table->string('safety_check_status');
             $table->text('details')->nullable();
             $table->timestamps();

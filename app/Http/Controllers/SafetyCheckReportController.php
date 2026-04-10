@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EarthTestingItem;
 use App\Models\Fault;
 use App\Models\InspectionItem;
+use App\Models\PolarityTestingItem;
 use App\Models\SafetyCheckReport;
+use App\Models\VisualInspectionItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -58,7 +61,11 @@ class SafetyCheckReportController extends Controller
     public function create()
     {
         $inspection_items = InspectionItem::all();
-        return view('admin_panel.safety_check_report.create', compact('inspection_items'));
+        $visual_inspection_items = VisualInspectionItem::all();
+        $polarity_testing_items        = PolarityTestingItem::all();
+        $earth_testing_items = EarthTestingItem::all();
+        $data = null; // for create form
+        return view('admin_panel.safety_check_report.create', compact('data', 'inspection_items', 'visual_inspection_items', 'polarity_testing_items', 'earth_testing_items'));
     }
 
     public function store(Request $request)
@@ -68,6 +75,10 @@ class SafetyCheckReportController extends Controller
             'report_date' => 'required|date',
             'details' => 'nullable|string',
             'safety_check_status' => 'required|string|max:255',
+            'faults' => 'required|array',
+            'faults.*.fault_name' => 'required|string|max:255',
+        ], [
+            'faults.*.fault_name.required' => 'Fault name is required.',
         ]);
 
         $report = SafetyCheckReport::create([
@@ -82,19 +93,22 @@ class SafetyCheckReportController extends Controller
         if ($request->has('faults')) {
             $faults = $request->faults;
 
-            foreach ($faults['fault_name'] as $index => $faultName) {
+            foreach ($faults as $index => $fault_arr) {
                 Fault::create([
                     'report_id' => $report->id,
-                    'fault' => $faultName,
-                    'required_rectification' => $faults['required_rectification'][$index] ?? null,
-                    'repair_completed' => $faults['repair_completed'][$index] ?? 0,
-                    'assessment' => $faults['assessment'][$index] ?? null,
+                    'fault' => $fault_arr['fault_name'],
+                    'required_rectification' => $fault_arr['required_rectification'] ?? null,
+                    'repair_completed' => $fault_arr['repair_completed'] ?? 0,
+                    'assessment' => $fault_arr['assessment'] ?? null,
                 ]);
             }
         }
 
         // attach selected items
         $report->inspectionItems()->sync($request->inspection_items ?? []);
+        $report->inspectionItems()->sync($request->inspection_items ?? []);
+        $report->polarityTestingItems()->sync($request->polarity_testing_items ?? []);
+        $report->earthTestingItems()->sync($request->earth_testing_items ?? []);
 
         return redirect()
             ->route('safetycheckreport.index')
@@ -104,8 +118,12 @@ class SafetyCheckReportController extends Controller
     public function edit($id)
     {
         $inspection_items = InspectionItem::all();
+        $visual_inspection_items = VisualInspectionItem::all();
+        $polarity_testing_items        = PolarityTestingItem::all();
+        $earth_testing_items = EarthTestingItem::all();
+
         $data = SafetyCheckReport::findOrFail($id);
-        return view('admin_panel.safety_check_report.create', compact('data', 'inspection_items'));
+        return view('admin_panel.safety_check_report.create', compact('data', 'inspection_items', 'visual_inspection_items', 'polarity_testing_items', 'earth_testing_items'));
     }
 
     public function update(Request $request)
@@ -140,27 +158,27 @@ class SafetyCheckReportController extends Controller
         if ($request->has('faults')) {
             $faults = $request->faults;
 
-            foreach ($faults['fault_name'] as $index => $faultName) {
-                $faultId = $faults['id'][$index] ?? null;
+            foreach ($faults as $index => $d) {
+                $faultId = $d['id'] ?? null;
 
                 if ($faultId) {
                     // Update existing fault
                     $fault = $report->faults()->find($faultId);
                     if ($fault) {
                         $fault->update([
-                            'fault' => $faultName,
-                            'required_rectification' => $faults['required_rectification'][$index] ?? null,
-                            'repair_completed' => $faults['repair_completed'][$index] ?? 0,
-                            'assessment' => $faults['assessment'][$index] ?? null,
+                            'fault' => $d['fault_name'],
+                            'required_rectification' => $d['required_rectification'] ?? null,
+                            'repair_completed' => $d['repair_completed'] ?? 0,
+                            'assessment' => $d['assessment'] ?? null,
                         ]);
                     }
                 } else {
                     // Create new fault
                     $report->faults()->create([
-                        'fault' => $faultName,
-                        'required_rectification' => $faults['required_rectification'][$index] ?? null,
-                        'repair_completed' => $faults['repair_completed'][$index] ?? 0,
-                        'assessment' => $faults['assessment'][$index] ?? null,
+                        'fault' => $d['fault_name'],
+                        'required_rectification' => $d['required_rectification'] ?? null,
+                        'repair_completed' => $d['repair_completed'] ?? 0,
+                        'assessment' => $d['assessment'] ?? null,
                     ]);
                 }
             }
@@ -168,6 +186,9 @@ class SafetyCheckReportController extends Controller
 
         // inspection item
         $report->inspectionItems()->sync($request->inspection_items ?? []);
+        $report->visualInspectionItems()->sync($request->visual_inspection_items ?? []);
+        $report->polarityTestingItems()->sync($request->polarity_testing_items ?? []);
+        $report->earthTestingItems()->sync($request->earth_testing_items ?? []);
 
         return redirect()
             ->route('safetycheckreport.index')
@@ -198,6 +219,34 @@ class SafetyCheckReportController extends Controller
             'key' => Str::slug($request->name),
         ]);
 
+        return response()->json($item);
+    }
+
+    public function addVisualInspectionItem(Request $request)
+    {
+        $item = VisualInspectionItem::create([
+            'name' => $request->name,
+            'key'  => Str::slug($request->name),
+        ]);
+
+        return response()->json($item);
+    }
+
+    public function addPolarityTestingItem(Request $request)
+    {
+        $item = PolarityTestingItem::create([
+            'name' => $request->name,
+            'key'  => Str::slug($request->name),
+        ]);
+        return response()->json($item);
+    }
+
+    public function addEarthTestingItem(Request $request)
+    {
+        $item = EarthTestingItem::create([
+            'name' => $request->name,
+            'key'  => Str::slug($request->name),
+        ]);
         return response()->json($item);
     }
 }
