@@ -44,6 +44,6 @@ class SafetyCheckReport extends Model
 
     public function images()
     {
-        return $this->hasMany(ReportImage::class, 'safety_check_report_id');
+        return $this->hasMany(ReportImage::class, 'report_id');
     }
 }

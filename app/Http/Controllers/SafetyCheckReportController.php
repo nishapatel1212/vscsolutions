@@ -10,6 +10,7 @@ use App\Models\SafetyCheckReport;
 use App\Models\VisualInspectionItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -79,6 +80,8 @@ class SafetyCheckReportController extends Controller
             'faults.*.fault_name' => 'required|string|max:255',
         ], [
             'faults.*.fault_name.required' => 'Fault name is required.',
+            'images.*.file'            => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*.title'           => 'nullable|string|max:255',
         ]);
 
         $report = SafetyCheckReport::create([
@@ -109,6 +112,20 @@ class SafetyCheckReportController extends Controller
         $report->inspectionItems()->sync($request->inspection_items ?? []);
         $report->polarityTestingItems()->sync($request->polarity_testing_items ?? []);
         $report->earthTestingItems()->sync($request->earth_testing_items ?? []);
+
+        // Store Images
+        if ($request->has('images')) {
+            foreach ($request->images as $image) {
+                if (!empty($image['file']) && isset($image['file']) && $image['file']->isValid()) {
+                    $path = $image['file']->store('report_images', 'public');
+
+                    $report->images()->create([
+                        'title'      => $image['title'] ?? null,
+                        'image_path' => $path,
+                    ]);
+                }
+            }
+        }
 
         return redirect()
             ->route('safetycheckreport.index')
@@ -141,6 +158,8 @@ class SafetyCheckReportController extends Controller
             'faults.required_rectification.*' => 'required|string',
             'faults.repair_completed.*' => 'required|in:0,1',
             'faults.assessment.*' => 'nullable|string',
+            'images.*.file'                    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*.title'                   => 'nullable|string|max:255',
         ]);
 
         // 1️⃣ Update main Report
@@ -190,6 +209,73 @@ class SafetyCheckReportController extends Controller
         $report->polarityTestingItems()->sync($request->polarity_testing_items ?? []);
         $report->earthTestingItems()->sync($request->earth_testing_items ?? []);
 
+        // 3️⃣ Update Images — only upload new ones, keep existing
+        $images = $request->input('images', []);
+        $imageFiles = $request->file('images', []);
+
+        // Merge files into images array
+        foreach ($imageFiles as $i => $fileData) {
+            if (isset($fileData['file'])) {
+                $images[$i]['file'] = $fileData['file'];
+            }
+        }
+
+        if (!empty($images)) {
+
+            // Get all image IDs submitted in the form (existing ones)
+            $submittedImageIds = collect($images)
+                ->pluck('id')
+                ->filter()
+                ->map(fn($id) => (int) $id)
+                ->toArray();
+
+            // Delete images that were removed from the form
+            $removedImages = $report->images()->whereNotIn('id', $submittedImageIds)->get();
+            foreach ($removedImages as $removed) {
+                Storage::disk('public')->delete($removed->image_path);
+                $removed->delete();
+            }
+
+            foreach ($images as $image) {
+                $file = $image['file'] ?? null;
+
+                // Skip if no new file uploaded
+                if (!$file || !$file->isValid()) {
+                    // Update title only if image_id exists
+                    if (!empty($image['id'])) {
+                        $report->images()->where('id', $image['id'])->update([
+                            'title' => $image['title'] ?? null,
+                        ]);
+                    }
+                    continue;
+                }
+
+                if (!empty($image['id'])) {
+                    // Replace existing image
+                    $existing = $report->images()->find($image['id']);
+                    if ($existing) {
+                        Storage::disk('public')->delete($existing->image_path);
+                        $existing->update([
+                            'title'      => $image['title'] ?? null,
+                            'image_path' => $file->store('report_images', 'public'),
+                        ]);
+                    }
+                } else {
+                    // Brand new image
+                    $report->images()->create([
+                        'title'      => $image['title'] ?? null,
+                        'image_path' => $file->store('report_images', 'public'),
+                    ]);
+                }
+            }
+        } else {
+            // No images in form at all — remove all existing images
+            foreach ($report->images as $removed) {
+                Storage::disk('public')->delete($removed->image_path);
+                $removed->delete();
+            }
+        }
+
         return redirect()
             ->route('safetycheckreport.index')
             ->with('success', 'Updated Successfully');
@@ -204,8 +290,10 @@ class SafetyCheckReportController extends Controller
     public function downloadPdf($id)
     {
         $data = SafetyCheckReport::findOrFail($id);
+        $eAllLeft    = EarthTestingItem::where('section', 'left')->get();
+        $eAllRight   = EarthTestingItem::where('section', 'right')->get();
 
-        $pdf = Pdf::loadView('admin_panel.safety_check_report.pdf', compact('data'))
+        $pdf = Pdf::loadView('admin_panel.safety_check_report.pdf', compact('data', 'eAllLeft', 'eAllRight'))
             ->setPaper('A4', 'portrait');
 
         // return $pdf->download('safety-check-report-' . $id . '.pdf');

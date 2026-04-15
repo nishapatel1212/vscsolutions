@@ -23,9 +23,32 @@
     $faults = !empty($data->faults) ? $data->faults->toArray() : old('faults', []);
 @endphp
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 @section('content')
 
-<form action="{{ !empty($data) ? route('safetycheckreport.update') : route('safetycheckreport.store') }}" method="POST">
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<form action="{{ !empty($data) ? route('safetycheckreport.update') : route('safetycheckreport.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
     <input type="hidden" name="id" class="form-control" value="{{ $data->id ?? '' }}">
@@ -304,42 +327,72 @@
     </div>
 
     {{-- Report Images --}}
-    <div class="card card-warning shadow-sm">
-        <div class="card-header bg-warning text-white">
+    <div class="card card-warning shadow-4">
+        <div class="card-header text-white">
             <h5 class="mb-0">Report Images</h5>
         </div>
 
         <div class="card-body">
             <div id="image-wrapper">
-                <!-- First Row -->
-                <div class="row g-3 align-items-center image-row mb-3 p-2 border rounded">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Image Title</label>
-                        <input type="text" name="images[0][title]" class="form-control">
-                    </div>
+                @if(isset($data) && $data->images->count())
+                    {{-- Existing Images --}}
+                    @foreach($data->images as $i => $image)
+                    <div class="row g-3 align-items-center image-row mb-3 p-4 border rounded">
 
-                    <div class="col-md-4">
-                        <label class="form-label">Choose Image</label>
-                        <input type="file"
-                            name="images[0][file]"
-                            class="form-control image-input"
-                            accept="image/*">
-                    </div>
+                        <input type="hidden" name="images[{{ $i }}][id]" value="{{ $image->id }}">
 
-                    <div class="col-md-3">
-                        <label class="form-label">Preview</label>
-                        <img src=""
-                            class="img-thumbnail preview-img"
-                            style="height:300px; display:none;">
-                    </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Image Title</label>
+                            <input type="text" name="images[{{ $i }}][title]" class="form-control" value="{{ $image->title }}">
+                        </div>
 
-                    <div class="col-md-1 text-end">
-                        <button type="button" class="btn btn-danger remove-row mt-4">
-                            ✕
-                        </button>
+                        <div class="col-md-4">
+                            <label class="form-label">Choose Image (leave empty to keep existing)</label>
+                            <input type="file" name="images[{{ $i }}][file]" class="form-control image-input" accept="image/*">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Preview</label>
+                            <img src="{{ asset('storage/' . $image->image_path) }}" class="img-thumbnail preview-img" style="height:300px;">
+                        </div>
+
+                        <div class="col-md-1 text-end">
+                            <button type="button" class="btn btn-danger remove-row mt-4">✕</button>
+                        </div>
+
                     </div>
-                </div>
+                    @endforeach
+
+                @else
+                    {{-- Default empty row for create --}}
+                    <div class="row g-3 align-items-center image-row mb-3 p-4 border rounded">
+
+                        <div class="col-md-4">
+                            <label class="form-label">Image Title</label>
+                            <input type="text" name="images[0][title]" class="form-control">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Choose Image</label>
+                            <input type="file"
+                                name="images[0][file]"
+                                class="form-control image-input"
+                                accept="image/*">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Preview</label>
+                            <img src="" class="img-thumbnail preview-img" style="height:300px; display:none;">
+                        </div>
+
+                        <div class="col-md-1 text-end">
+                            <button type="button" class="btn btn-danger remove-row mt-4">✕</button>
+                        </div>
+
+                    </div>
+                @endif
+
             </div>
 
             <!-- Buttons -->
@@ -347,16 +400,34 @@
                 <button type="button" id="add-more" class="btn btn-secondary">
                     + Add More Images
                 </button>
-
             </div>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{{ route('safetycheckreport.index') }}" class="btn btn-secondary">Back</a>
+    <div class="d-flex justify-content-center gap-2">
+        <button type="submit" class="btn btn-primary mr-2 mb-5">Save</button>
+        <a href="{{ route('safetycheckreport.index') }}" class="btn btn-secondary mb-5">Back</a>
+    </div>
 
 </form>
 @endsection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @section('js') <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -557,19 +628,20 @@
         }
     });
 
-    let index = 1;
+    let index = {{ isset($data) ? $data->images->count() : 1 }};
 
     /* Image - ADD MORE ROW */
-    document.getElementById('add-more').addEventListener('click', function () {
-
+    $('#add-more').on('click', function () {
         let html = `
-        <div class="row g-3 align-items-center image-row mb-3 p-2 border rounded">
+        <div class="row g-3 align-items-center image-row mb-3 p-4 border rounded">
 
             <div class="col-md-4">
+                <label class="form-label">Image Title</label>
                 <input type="text" name="images[${index}][title]" class="form-control">
             </div>
 
             <div class="col-md-4">
+                <label class="form-label">Choose Image</label>
                 <input type="file"
                     name="images[${index}][file]"
                     class="form-control image-input"
@@ -577,7 +649,8 @@
             </div>
 
             <div class="col-md-3">
-                <img src="" class="img-thumbnail preview-img" style="height:80px; display:none;">
+                <label class="form-label">Preview</label>
+                <img src="" class="img-thumbnail preview-img" style="height:300px; display:none;">
             </div>
 
             <div class="col-md-1 text-end">
@@ -586,7 +659,7 @@
 
         </div>`;
 
-        document.getElementById('image-wrapper').insertAdjacentHTML('beforeend', html);
+        $('#image-wrapper').append(html);
         index++;
     });
 
