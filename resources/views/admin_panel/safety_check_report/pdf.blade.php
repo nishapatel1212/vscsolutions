@@ -52,7 +52,7 @@
             transform: skewX(-10deg);
         }
         .cover-body {
-            padding: 40px 30px 20px 30px;
+            padding: 40px 30px 20px 20px;
         }
         .cover-brand {
             display: flex;
@@ -62,14 +62,14 @@
         }
         .cover-brand img { height: 30px; }
         .cover-title {
-            font-size: 32px;
+            font-size:50px;
             font-weight: bold;
             color: #222;
             line-height: 1.2;
             margin-bottom: 30px;
         }
         .cover-subtitle {
-            font-size: 13px;
+            font-size: 25px;
             font-weight: bold;
             color: #333;
             margin-bottom: 40px;
@@ -82,6 +82,10 @@
             font-size: 10px;
             color: #555;
             border-top: 1px solid #ddd;
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
         }
         .cover-social span {
             display: inline-block;
@@ -180,17 +184,17 @@
 <div class="page">
     <div class="cover">
         <div class="cover-header">
-            <img class="cover-logo" src="{{ asset('images/logo/vaishu_logo.png') }}" alt="Logo">
+            <img class="cover-logo" src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="Logo">
         </div>
 
   
 
-        <div class="cover-body">
+        <div class="cover-body" style="text-align: center; width: 100%;">
             <div class="cover-brand">
-                <img src="{{ asset('images/logo/vaishu_logo.png') }}" alt="Logo" style="height:25px;">
+                <img src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="Logo" style="height:200px;width:500px;">
             </div>
-            <div class="cover-title">Safety and<br>Compliance<br>Report</div>
-            <div class="cover-subtitle">Electrical Check Safety Check Report</div>
+            <div class="cover-title" style="text-align:center;">Safety and Compliance Report</div>
+            <div class="cover-subtitle" style="text-align:center;">Electrical Check Safety Check Report</div>
         </div>
 
         <div class="cover-footer">

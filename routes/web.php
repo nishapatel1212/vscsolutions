@@ -40,7 +40,7 @@ Route::middleware(['auth'])->prefix('safetycheck')->group(function () {
     Route::post('/store', [SafetyCheckReportController::class, 'store'])->name('safetycheckreport.store');
     Route::get('/edit/{id}', [SafetyCheckReportController::class, 'edit'])->name('safetycheckreport.edit');
     Route::post('/update', [SafetyCheckReportController::class, 'update'])->name('safetycheckreport.update');
-    Route::post('/destroy', [SafetyCheckReportController::class, 'destroy'])->name('safetycheckreport.destroy');
+    Route::post('/destroy/{id}', [SafetyCheckReportController::class, 'destroy'])->name('safetycheckreport.destroy');
     Route::get('safetcheck-reports/{id}/pdf', [SafetyCheckReportController::class, 'downloadPdf'])->name('safetycheckreport.pdf');
     Route::post('/inspection-items', [SafetyCheckReportController::class, 'addInspectionItem'])->name('inspection-items.store');
     Route::post('visual-inspection-items/store', [SafetyCheckReportController::class, 'addVisualInspectionItem'])->name('visual-inspection-items.store');

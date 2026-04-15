@@ -62,34 +62,40 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
+                    <label>Client Name</label>
+                    <input type="text" name="client_name" class="form-control @error('client_name') is-invalid @enderror" value="{{ $data->client_name ?? old('client_name') }}">
+                    @error('client_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+
+                </div>
+
+                <div class="col-md-6 mb-3">
                     <label>Address</label>
                     <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" value="{{ $data->address ?? old('address') }}">
                     @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
                 </div>
+            </div>
 
+            <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Report Date</label>
                     <input type="date" name="report_date" class="form-control @error('report_date') is-invalid @enderror" value="{{ old('report_date', isset($data->report_date) ? \Carbon\Carbon::parse($data->report_date)->format('Y-m-d') : date('Y-m-d')) }}">
                     @error('report_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
-            </div>
 
-            <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Date of previous Safety Check (if any):</label>
                     <input type="date" name="previous_safety_date" class="form-control @error('previous_safety_date') is-invalid @enderror" value="{{ $data->previous_safety_date ?? old('previous_safety_date') }}">
                     @error('previous_safety_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
-                
+            </div>
+
+            <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Electrical Safety Check</label>
                     <input type="text" name="safety_check_status" class="form-control @error('safety_check_status') is-invalid @enderror" value="{{ $data->safety_check_status ?? old('safety_check_status') }}">
                     @error('safety_check_status') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
-            </div>
-
-            <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Details</label>
                     <textarea name="details" class="form-control" rows="1">{{ $data->details ?? old('details') }}</textarea>
@@ -121,9 +127,9 @@
                             <tr>
                                 <input type="hidden" name="faults[{{ $index }}][id]" value="{{ $d['id'] ?? '' }}" class="form-control">
                                 <td>
-                                    <input type="text" name="faults[{{ $index }}][fault_name]" value="{{ $d['fault'] }}" class="form-control @error('faults.'.$index.'.fault_name') is-invalid @enderror">
+                                    <input type="text" name="faults[{{ $index }}][fault]" value="{{ $d['fault'] }}" class="form-control @error('faults.'.$index.'.fault') is-invalid @enderror">
                                     
-                                    @error('faults.'.$index.'.fault_name')
+                                    @error('faults.'.$index.'.fault')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </td>
@@ -149,8 +155,8 @@
                         <!-- Empty row for create page -->
                         <tr>
                             <td>
-                                <input type="text" name="faults[0][fault_name]" class="form-control @error('faults.fault_name.0') is-invalid @enderror">
-                                @error('faults.fault_name.0')
+                                <input type="text" name="faults[0][fault]" class="form-control @error('faults.fault.0') is-invalid @enderror">
+                                @error('faults.fault.0')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </td>
@@ -436,7 +442,7 @@
     // add new fault row
     $(document).on('click', '.addRow', function() {
         let table = $('#faultTable tbody');
-        let firstRowInput = table.find('tr:first input[name*="[fault_name]"]');
+        let firstRowInput = table.find('tr:first input[name*="[fault]"]');
 
         // Check if first input is empty
         if (firstRowInput.val().trim() === '') {

@@ -311,10 +311,10 @@ return [
         ],
 
         // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
+        // [
+        //     'type' => 'sidebar-menu-search',
+        //     'text' => 'search',
+        // ],
         [
             'text' => 'blog',
             'url' => 'nisha/blog',
@@ -323,13 +323,13 @@ return [
         [
             'text' => 'Dashboard',
             'url' => 'dashboard',
-            'icon' => 'far fa-fw fa-file',
+            'icon' => 'fas fa-home',
             'label_color' => 'success',
         ],
         [
             'text' => 'Safety Check Report',
             'url' => 'safetycheck/index',
-            'icon' => 'far fa-fw fa-file',
+            'icon' => 'fas fa-file-signature',
             'label_color' => 'success',
         ],
     ],

@@ -19,7 +19,7 @@ class SafetyCheckReportController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = SafetyCheckReport::latest()->select('*');
+            $data = SafetyCheckReport::orderBy('id', 'desc');
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -36,7 +36,6 @@ class SafetyCheckReportController extends Controller
 
                         <form action="' . $deleteUrl . '" method="POST" style="display:inline-block;">
                             ' . csrf_field() . '
-                            ' . method_field('DELETE') . '
                             <button type="submit" class="text-red-500 mx-1 bg-transparent border-0 p-0 hover:text-red-700 transition-all" onclick="return confirm(\'Are you sure?\')" title="Delete">
                                 <i class="fas fa-trash-alt fa-lg"></i>
                             </button>
@@ -72,20 +71,26 @@ class SafetyCheckReportController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'client_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'report_date' => 'required|date',
             'details' => 'nullable|string',
             'safety_check_status' => 'required|string|max:255',
             'faults' => 'required|array',
-            'faults.*.fault_name' => 'required|string|max:255',
+            'faults.*.fault' => 'required|string|max:255',
+            'images.*.file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*.title' => 'nullable|string|max:255',
         ], [
-            'faults.*.fault_name.required' => 'Fault name is required.',
-            'images.*.file'            => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'images.*.title'           => 'nullable|string|max:255',
+            'faults.*.fault.required' => 'Fault name is required.',
+            'images.*.file.max' => 'Each image must not exceed 2MB in size.',
+            'images.*.file.image' => 'Only image files are allowed.',
+            'images.*.file.mimes' => 'Allowed formats: jpeg, png, jpg, gif, webp.',
+            'images.*.title.string' => 'Image title must be a valid string.',
         ]);
 
         $report = SafetyCheckReport::create([
             'address' => $request->address,
+            'client_name' => $request->client_name,
             'report_date' => $request->report_date,
             'previous_safety_date' => $request->previous_safety_date,
             'details' => $request->details,
@@ -99,7 +104,7 @@ class SafetyCheckReportController extends Controller
             foreach ($faults as $index => $fault_arr) {
                 Fault::create([
                     'report_id' => $report->id,
-                    'fault' => $fault_arr['fault_name'],
+                    'fault' => $fault_arr['fault'],
                     'required_rectification' => $fault_arr['required_rectification'] ?? null,
                     'repair_completed' => $fault_arr['repair_completed'] ?? 0,
                     'assessment' => $fault_arr['assessment'] ?? null,
@@ -109,21 +114,18 @@ class SafetyCheckReportController extends Controller
 
         // attach selected items
         $report->inspectionItems()->sync($request->inspection_items ?? []);
-        $report->inspectionItems()->sync($request->inspection_items ?? []);
+        $report->visualInspectionItems()->sync($request->visual_inspection_items ?? []);
         $report->polarityTestingItems()->sync($request->polarity_testing_items ?? []);
         $report->earthTestingItems()->sync($request->earth_testing_items ?? []);
 
-        // Store Images
-        if ($request->has('images')) {
-            foreach ($request->images as $image) {
-                if (!empty($image['file']) && isset($image['file']) && $image['file']->isValid()) {
-                    $path = $image['file']->store('report_images', 'public');
+        foreach ($request->images ?? [] as $image) {
+            if (isset($image['file']) && $image['file']->isValid()) {
+                $path = $image['file']->store('report_images', 'public');
 
-                    $report->images()->create([
-                        'title'      => $image['title'] ?? null,
-                        'image_path' => $path,
-                    ]);
-                }
+                $report->images()->create([
+                    'title'      => $image['title'] ?? null,
+                    'image_path' => $path,
+                ]);
             }
         }
 
@@ -149,17 +151,24 @@ class SafetyCheckReportController extends Controller
 
         $request->validate([
             'address' => 'required|string|max:255',
+            'client_name' => 'required|string|max:255',
             'report_date' => 'required|date',
             'details' => 'nullable|string',
             'safety_check_status' => 'required|string|max:255',
 
             'faults.id.*' => 'nullable|exists:faults,id', // optional, only if updating existing fault
-            'faults.fault_name.*' => 'required|string',
+            'faults.fault.*' => 'required|string',
             'faults.required_rectification.*' => 'required|string',
             'faults.repair_completed.*' => 'required|in:0,1',
             'faults.assessment.*' => 'nullable|string',
             'images.*.file'                    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'images.*.title'                   => 'nullable|string|max:255',
+        ],  [
+            'faults.*.fault.required' => 'Fault name is required.',
+            'images.*.file.max' => 'Each image must not exceed 2MB in size.',
+            'images.*.file.image' => 'Only image files are allowed.',
+            'images.*.file.mimes' => 'Allowed formats: jpeg, png, jpg, gif, webp.',
+            'images.*.title.string' => 'Image title must be a valid string.',
         ]);
 
         // 1️⃣ Update main Report
@@ -167,6 +176,7 @@ class SafetyCheckReportController extends Controller
 
         $report->update([
             'address' => $request->address,
+            'client_name' => $request->client_name,
             'report_date' => $request->report_date,
             'previous_safety_date' => $request->previous_safety_date,
             'details' => $request->details,
@@ -185,7 +195,7 @@ class SafetyCheckReportController extends Controller
                     $fault = $report->faults()->find($faultId);
                     if ($fault) {
                         $fault->update([
-                            'fault' => $d['fault_name'],
+                            'fault' => $d['fault'],
                             'required_rectification' => $d['required_rectification'] ?? null,
                             'repair_completed' => $d['repair_completed'] ?? 0,
                             'assessment' => $d['assessment'] ?? null,
@@ -194,7 +204,7 @@ class SafetyCheckReportController extends Controller
                 } else {
                     // Create new fault
                     $report->faults()->create([
-                        'fault' => $d['fault_name'],
+                        'fault' => $d['fault'],
                         'required_rectification' => $d['required_rectification'] ?? null,
                         'repair_completed' => $d['repair_completed'] ?? 0,
                         'assessment' => $d['assessment'] ?? null,

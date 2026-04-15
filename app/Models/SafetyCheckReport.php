@@ -10,6 +10,7 @@ class SafetyCheckReport extends Model
     use HasFactory;
 
     protected $fillable = [
+        'client_name',
         'address',
         'report_date',
         'previous_safety_date',

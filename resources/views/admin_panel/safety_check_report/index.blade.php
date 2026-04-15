@@ -17,17 +17,20 @@
 </div>
 @endif
 
-<a href="{{ route('safetycheckreport.create') }}" class="btn btn-primary mb-3">
-    Add Property Report
-</a>
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ route('safetycheckreport.create') }}" class="btn btn-primary mb-3">
+        Add Property Report
+    </a>
+</div>
 
 <div class="card">
     <div class="card-body">
         <table class="table table-bordered" id="reportsTable">
             <thead>
                 <tr>
-                    <th>Safety Check ID</th>
-                    <th>Property Address</th>
+                    {{-- <th>Safety Check ID</th> --}}
+                    <th>Client Name</th>
+                    <th>Address</th>
                     <th>Date</th>
                     <th>Created</th>
                     <th>Actions</th>
@@ -47,6 +50,8 @@
         $('#reportsTable').DataTable({
             processing: true,
             serverSide: true,
+            responsive: true,
+            pageLength: 10,
             ajax: "{{ route('safetycheckreport.index') }}",
 
             columns: [
@@ -56,9 +61,13 @@
                 //     orderable: false,
                 //     searchable: false
                 // },
+                // {
+                //     data: 'id',
+                //     name: 'id'
+                // },
                 {
-                    data: 'id',
-                    name: 'id'
+                    data: 'client_name',
+                    name: 'client_name'
                 },
                 {
                     data: 'address',

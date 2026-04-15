@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.brand-image {
-    width: 500px;  /* adjust width */
+.brand-link .brand-image {
+    width: 217px !important;  /* adjust width */
     height: auto;  /* maintain aspect ratio */
 }

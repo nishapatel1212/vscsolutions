@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('safety_check_reports', function (Blueprint $table) {
             $table->id();
-            $table->string('address');
+            $table->string('client_name', 255);
+            $table->string('address', 255);
             $table->date('report_date');
             $table->date('previous_safety_date')->nullable();
             $table->string('safety_check_status');
