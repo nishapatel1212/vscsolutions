@@ -102,12 +102,26 @@ class SafetyCheckReportController extends Controller
             $faults = $request->faults;
 
             foreach ($faults as $index => $fault_arr) {
+
+                // Default image path
+                $imagePath = null;
+
+                // Check if image exists for this row
+                if (isset($fault_arr['image']) && $fault_arr['image']) {
+                    $file = $fault_arr['image'];
+                    $imageName = time() . '_' . $index . '_' . $file->getClientOriginalName();
+                    $file->storeAs('fault_images/' . $report->id, $imageName, 'public');
+                    $imagePath = 'fault_images/' . $report->id . $imageName;
+                }
+
                 Fault::create([
                     'report_id' => $report->id,
                     'fault' => $fault_arr['fault'],
                     'required_rectification' => $fault_arr['required_rectification'] ?? null,
                     'repair_completed' => $fault_arr['repair_completed'] ?? 0,
                     'assessment' => $fault_arr['assessment'] ?? null,
+                    'location' => $fault_arr['location'] ?? null,
+                    'image' => $imagePath,
                 ]);
             }
         }
@@ -120,7 +134,7 @@ class SafetyCheckReportController extends Controller
 
         foreach ($request->images ?? [] as $image) {
             if (isset($image['file']) && $image['file']->isValid()) {
-                $path = $image['file']->store('report_images', 'public');
+                $path = $image['file']->store('report_images/' . $report->id, 'public');
 
                 $report->images()->create([
                     'title'      => $image['title'] ?? null,
@@ -190,16 +204,39 @@ class SafetyCheckReportController extends Controller
             foreach ($faults as $index => $d) {
                 $faultId = $d['id'] ?? null;
 
+                // Handle image per fault
+                $imagePath = null;
+
+                if (isset($d['image']) && $d['image'] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $d['image'];
+                    $imageName = time() . '_' . $index . '_' . $file->getClientOriginalName();
+                    $file->storeAs('fault_images/' . $id, $imageName, 'public');
+                    $imagePath = 'fault_images/' . $id . $imageName;
+                }
+
                 if ($faultId) {
                     // Update existing fault
                     $fault = $report->faults()->find($faultId);
                     if ($fault) {
-                        $fault->update([
+                        $updateData = [
                             'fault' => $d['fault'],
                             'required_rectification' => $d['required_rectification'] ?? null,
                             'repair_completed' => $d['repair_completed'] ?? 0,
                             'assessment' => $d['assessment'] ?? null,
-                        ]);
+                            'location' => $d['location'] ?? null,
+                        ];
+
+                        // Only update image if new one uploaded
+                        if ($imagePath) {
+                            // delete old image if exists
+                            if ($fault->image && \Storage::disk('public')->exists($fault->image)) {
+                                \Storage::disk('public')->delete($fault->image);
+                            }
+
+                            $updateData['image'] = $imagePath;
+                        }
+
+                        $fault->update($updateData);
                     }
                 } else {
                     // Create new fault
@@ -267,14 +304,14 @@ class SafetyCheckReportController extends Controller
                         Storage::disk('public')->delete($existing->image_path);
                         $existing->update([
                             'title'      => $image['title'] ?? null,
-                            'image_path' => $file->store('report_images', 'public'),
+                            'image_path' => $file->store('report_images/' . $id, 'public'),
                         ]);
                     }
                 } else {
                     // Brand new image
                     $report->images()->create([
                         'title'      => $image['title'] ?? null,
-                        'image_path' => $file->store('report_images', 'public'),
+                        'image_path' => $file->store('report_images/' . $id, 'public'),
                     ]);
                 }
             }

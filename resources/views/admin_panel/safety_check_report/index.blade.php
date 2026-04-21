@@ -19,7 +19,7 @@
 
 <div class="d-flex justify-content-end mb-3">
     <a href="{{ route('safetycheckreport.create') }}" class="btn btn-primary mb-3">
-        Add Property Report
+        Add Report
     </a>
 </div>
 
@@ -29,11 +29,11 @@
             <thead>
                 <tr>
                     {{-- <th>Safety Check ID</th> --}}
+                    <th>Actions</th>
                     <th>Client Name</th>
                     <th>Address</th>
                     <th>Date</th>
                     <th>Created</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
         </table>
@@ -66,6 +66,12 @@
                 //     name: 'id'
                 // },
                 {
+                    data: 'actions',
+                    name: 'actions',
+                    orderable: false,
+                    searchable: false
+                },
+                {
                     data: 'client_name',
                     name: 'client_name'
                 },
@@ -80,12 +86,6 @@
                 {
                     data: 'created_at',
                     name: 'created_at'
-                },
-                {
-                    data: 'actions',
-                    name: 'actions',
-                    orderable: false,
-                    searchable: false
                 },
             ]
         });

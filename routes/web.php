@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SafetyCheckReportController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // chat page
+    Route::prefix('chatbot')->group(function () {
+        Route::get('/index', [ChatController::class, 'index'])->name('chatbot.index');
+        Route::post('/chat', [ChatController::class, 'chat'])->name('chatbot.talk');
+    });
 });
 
 Route::get('/dashboard', function () {

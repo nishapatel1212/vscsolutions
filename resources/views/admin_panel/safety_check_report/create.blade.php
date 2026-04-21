@@ -21,6 +21,10 @@
 
 @php 
     $faults = !empty($data->faults) ? $data->faults->toArray() : old('faults', []);
+    $oldInspectionItems = old('visual_inspection_items', []);
+    $old_inspection_items = old('inspection_items', []);
+    $old_polarity_testing_items = old('polarity_testing_items', []);
+    $old_earth_testing_items = old('earth_testing_items',[]);
 @endphp
 
 
@@ -62,14 +66,14 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label>Client Name</label>
+                    <label>Client Name <span class="text-danger">*</span></label>
                     <input type="text" name="client_name" class="form-control @error('client_name') is-invalid @enderror" value="{{ $data->client_name ?? old('client_name') }}">
                     @error('client_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label>Address</label>
+                    <label>Address <span class="text-danger">*</span></label>
                     <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" value="{{ $data->address ?? old('address') }}">
                     @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
@@ -92,7 +96,7 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label>Electrical Safety Check</label>
+                    <label>Electrical Safety Check <span class="text-danger">*</span></label>
                     <input type="text" name="safety_check_status" class="form-control @error('safety_check_status') is-invalid @enderror" value="{{ $data->safety_check_status ?? old('safety_check_status') }}">
                     @error('safety_check_status') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
@@ -114,10 +118,12 @@
             <table class="table table-bordered" id="faultTable">
                 <thead>
                     <tr>
-                        <th>Fault</th>
-                        <th>Required Rectification</th>
+                        <th>Fault <span class="text-danger">*</span></th>
+                        <th>Rectification</th>
+                        <th>Location</th>
                         <th>Repair Completed?</th>
                         <th>Assessment</th>
+                        <th>Image</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -137,6 +143,9 @@
                                     <input type="text" name="faults[{{ $index }}][required_rectification]" class="form-control" value="{{ $d['required_rectification'] }}">
                                 </td>
                                 <td>
+                                    <input type="text" name="faults[{{ $index }}][location]" value="{{ $d['location'] }}" class="form-control">
+                                </td>
+                                <td>
                                     <select name="faults[{{ $index }}][repair_completed]" class="form-control">
                                         <option value="1" {{ $d['repair_completed'] ? 'selected' : '' }}>Yes</option>
                                         <option value="0" {{ !$d['repair_completed'] ? 'selected' : '' }}>No</option>
@@ -144,6 +153,21 @@
                                 </td>
                                 <td>
                                     <input type="text" name="faults[{{ $index }}][assessment]" value="{{ $d['assessment'] }}" class="form-control">
+                                </td>
+                                <td>
+                                        <input type="file"
+                                            name="faults[{{ $index }}][image]"
+                                            class="form-control image-input"
+                                            accept="image/*" style="width:200px;">
+
+                                        @if(!empty($d['image']))
+                                            <img src="{{ asset('storage/'.$d['image']) }}"
+                                                class="img-preview mt-2"
+                                                style="width:150px; height:190px; object-fit:cover;">
+                                        @else
+                                            <img class="img-preview mt-2"
+                                                style="display:none; width:100px; height:100px; object-fit:cover;">
+                                        @endif
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-success addRow">+</button>
@@ -164,6 +188,9 @@
                                 <input type="text" name="faults[0][required_rectification]" class="form-control">
                             </td>
                             <td>
+                                <input type="text" name="faults[0][location]" class="form-control">
+                            </td>
+                            <td>
                                 <select name="faults[0][repair_completed]" class="form-control">
                                     <option value="1">Yes</option>
                                     <option value="0">No</option>
@@ -171,6 +198,10 @@
                             </td>
                             <td>
                                 <input type="text" name="faults[0][assessment]" class="form-control">
+                            </td>
+                            <td>
+                                <input type="file" name="faults[0][image]" class="form-control image-input" accept="image/*" style="width:200px;">
+                                <img class="img-preview mt-2" style="display:none; width:100px; height:100px; object-fit:cover;">
                             </td>
                             <td>
                                 <button type="button" class="btn btn-success addRow">+</button>
@@ -200,7 +231,7 @@
                                 value="{{ $item->id }}"
                                 class="form-check-input big-checkbox"
                                 id="item{{ $item->id }}"
-                                {{ isset($data) && $data->inspectionItems->contains($item->id) ? 'checked' : '' }}>
+                                {{ ((isset($data) && $data->inspectionItems->pluck('id')->contains($item->id)) || in_array($item->id, $old_inspection_items)) ? 'checked' : '' }}>
 
                             <label class="form-check-label" for="item{{ $item->id }}">
                                 {{ $item->name }}
@@ -240,7 +271,7 @@
                                 value="{{ $item->id }}"
                                 class="form-check-input big-checkbox"
                                 id="visualItem{{ $item->id }}"
-                                {{ isset($data) && $data->visualInspectionItems->contains($item->id) ? 'checked' : '' }}>
+                               {{ ((isset($data) && $data->visualInspectionItems->pluck('id')->contains($item->id)) || in_array($item->id, $oldInspectionItems)) ? 'checked' : '' }}>
     
                             <label class="form-check-label" for="visualItem{{ $item->id }}">
                                 {{ $item->name }}
@@ -279,7 +310,8 @@
                                 value="{{ $item->id }}"
                                 class="form-check-input big-checkbox"
                                 id="polarityItem{{ $item->id }}"
-                                {{ isset($data) && $data->polarityTestingItems->contains($item->id) ? 'checked' : '' }}>
+                                {{ ((isset($data) && $data->polarityTestingItems->pluck('id')->contains($item->id)) || in_array($item->id, $old_polarity_testing_items)) ? 'checked' : '' }}>
+
                             <label class="form-check-label" for="polarityItem{{ $item->id }}">
                                 {{ $item->name }}
                             </label>
@@ -313,7 +345,7 @@
                                 value="{{ $item->id }}"
                                 class="form-check-input big-checkbox"
                                 id="earthItem{{ $item->id }}"
-                                {{ isset($data) && $data->earthTestingItems->contains($item->id) ? 'checked' : '' }}>
+                                {{ ((isset($data) && $data->earthTestingItems->pluck('id')->contains($item->id)) || in_array($item->id, $old_earth_testing_items)) ? 'checked' : '' }}>
                             <label class="form-check-label" for="earthItem{{ $item->id }}">
                                 {{ $item->name }}
                             </label>
@@ -467,11 +499,17 @@
             }
 
             // clear values
-            if ($(this).is('input')) {
+            if ($(this).is('input[type="text"], input[type="file"]')) {
                 $(this).val('');
             } else if ($(this).is('select')) {
                 $(this).prop('selectedIndex', 0);
             }
+        });
+
+        // ✅ IMPORTANT: reset image preview
+        row.find('img.img-preview').each(function () {
+            $(this).attr('src', '');
+            $(this).hide(); // or $(this).css('display','none');
         });
 
         table.append(row);
@@ -483,6 +521,22 @@
             $(this).closest('tr').remove();
         }
     });
+
+    // fault image settings
+    $(document).on('change', '.image-input', function () {
+        let input = this;
+        let reader = new FileReader();
+        let preview = $(this).closest('td').find('.img-preview');
+
+        if (input.files && input.files[0]) {
+            reader.onload = function (e) {
+                preview.attr('src', e.target.result);
+                preview.show();
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+
 
     // add new inspection item
     function addNewItem() {

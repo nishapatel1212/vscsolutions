@@ -144,12 +144,12 @@
 
         .checkbox {
             display: inline-block;
-            width: 10px; height: 10px;
-            border: 1.5px solid #e8581c;
+            width: 12px; height: 12px;
+            border: 2px solid #e8581c;
             border-radius: 3px;
             text-align: center;
-            line-height: 13px;
-            font-size: 10px;
+            line-height: 3px;
+            font-size: 22px;
             color: #e8581c;
             vertical-align: middle;
         }
@@ -184,14 +184,22 @@
 <div class="page">
     <div class="cover">
         <div class="cover-header">
-            <img class="cover-logo" src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="Logo">
+            {{-- @if(env('CLIENT_NAME') == 'vsc')
+                <img class="cover-logo" src="{{ public_path('images/logo/vsc_logo.png') }}" alt="Logo">
+            @else
+                <img class="cover-logo" src="{{ public_path('images/logo/latin_logo.jpeg') }}" alt="Latin Electrical Logo">
+            @endif   --}}
         </div>
 
   
 
         <div class="cover-body" style="text-align: center; width: 100%;">
             <div class="cover-brand">
-                <img src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="Logo" style="height:200px;width:500px;">
+                @if(env('CLIENT_NAME') == 'vsc')
+                    <img src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="Logo" style="height:200px;width:500px;">
+                @else
+                    <img src="{{ public_path('images/logo/latin_logo.jpeg') }}" alt="Latin Electrical Logo" style="height:200px;width:500px;">
+                @endif 
             </div>
             <div class="cover-title" style="text-align:center;">Safety and Compliance Report</div>
             <div class="cover-subtitle" style="text-align:center;">Electrical Check Safety Check Report</div>
@@ -246,11 +254,11 @@
             <table>
                 <tr>
                     <td class="label">Email:</td>
-                    <td>info@vscsolutions.com.au</td>
+                    <td>{{ config(env('CLIENT_NAME') . '.email') }}</td>
                 </tr>
                 <tr>
                     <td class="label">Phone:</td>
-                    <td>0422 221 164</td>
+                    <td>{{ config(env('CLIENT_NAME') . '.phone') }}</td>
                 </tr>
             </table>
         </div>
@@ -532,8 +540,8 @@
                     <td>{{ $fault->location ?? '' }}</td>
                     <td>{{ $fault->assessment ?? '' }}</td>
                     <td>
-                        @if($fault->image_path)
-                            <img class="fault-img" src="{{ storage_path('app/public/' . $fault->image_path) }}" alt="Fault Image">
+                        @if($fault->image)
+                            <img class="fault-img" src="{{ storage_path('app/public/' . $fault->image) }}" alt="Fault Image">
                         @endif
                     </td>
                 </tr>
@@ -549,11 +557,11 @@
             <table>
                 <tr>
                     <td class="label">Electrical Safety check completed by:</td>
-                    <td class="value">{{ $data->electrician_name ?? '' }}</td>
+                    <td class="value">{{ config(env('CLIENT_NAME') . '.electrician_name') }}</td>
                 </tr>
                 <tr>
                     <td class="label">Licence/registration number:</td>
-                    <td class="value">{{ $data->licence_number ?? '' }}</td>
+                    <td class="value">{{ config(env('CLIENT_NAME') . '.licence_number')     }}</td>
                 </tr>
                 <tr>
                     <td class="label">Inspection date:</td>

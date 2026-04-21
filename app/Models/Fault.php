@@ -12,7 +12,9 @@ class Fault extends Model
         'fault',
         'required_rectification',
         'repair_completed',
-        'assessment'
+        'assessment',
+        'location',
+        'image'
     ];
 
     public function report()
