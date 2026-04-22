@@ -22,13 +22,16 @@ class SetDatabaseConnection
         // Map client to DB
         if ($client === 'vsc') {
             $dbName = env('DB_VSC_DATABASE');
+            $username = env('DB_VSC_USERNAME');
         } elseif ($client === 'latin') {
             $dbName = env('DB_LATIN_DATABASE');
+            $username = env('DB_LATIN_USERNAME');
         } else {
             abort(500, 'Invalid client configuration');
         }
 
         Config::set('database.connections.mysql.database', $dbName);
+        Config::set('database.connections.mysql.username', $username);
 
         DB::purge('mysql');
         DB::reconnect('mysql');
