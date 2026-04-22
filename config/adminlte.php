@@ -31,7 +31,8 @@ return [
     */
 
     'use_ico_only' => false,
-    'use_full_favicon' => false,
+    'use_full_favicon' => true,
+    'favicon' => 'images/logo/favicon-32x32.png',
 
     /*
     |--------------------------------------------------------------------------
