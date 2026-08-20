@@ -333,12 +333,6 @@ return [
             'icon' => 'fas fa-file-signature',
             'label_color' => 'success',
         ],
-        [
-            'text' => 'Chat Bot',
-            'url' => 'chatbot/index',
-            'icon' => 'fas fa-file-signature',
-            'label_color' => 'success',
-        ],
     ],
 
     /*

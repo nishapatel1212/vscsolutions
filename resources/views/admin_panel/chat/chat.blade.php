@@ -3,12 +3,10 @@
 @section('title', 'Create Safety Report')
 
 @section('content_header')
-<h1>Create Safety Check Report</h1>
+<h1>AI Chatbot</h1>
 @endsection
 
 @section('content')
-
-<h2>⚡ Latin Electrical AI Chatbot</h2>
 
 <div id="chat-box" style="border:1px solid #ccc; height:300px; overflow:auto; padding:10px;"></div>
 
