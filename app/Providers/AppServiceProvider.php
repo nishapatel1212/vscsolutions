@@ -23,19 +23,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
-        if (!App::runningInConsole()) {
-            // Set the public path explicitly
-            $publicPath = base_path('public_html/admin'); // change if your public folder is different
-            $this->app->bind('path.public', fn() => $publicPath);
-
-            $client = env('CLIENT_NAME');
-            $logo = match ($client) {
-                'vsc' => 'images/logo/vsc_logo.png',
-                'latin' => 'images/logo/latin_logo.jpeg',
-                default => 'images/logo/default.png',
-            };
-
-            Config::set('adminlte.logo_img', $logo);
-        }
     }
 }

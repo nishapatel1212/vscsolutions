@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\SafetyCheckReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,11 +50,22 @@ Route::prefix('safetycheck')->group(function () {
     Route::post('earth-testing-items/store', [SafetyCheckReportController::class, 'addEarthTestingItem'])->name('earth-testing-items.store');
 });
 
+// safetyCheck page
+Route::prefix('quote')->group(function () {
+    Route::get('/index', [QuoteController::class, 'index'])->name('quote.index');
+    Route::get('/create', [QuoteController::class, 'create'])->name('quote.create');
+    Route::post('/store', [QuoteController::class, 'store'])->name('quote.store');
+    Route::get('/{id}/edit', [QuoteController::class, 'edit'])->name('quote.edit');
+    Route::put('/{id}', [QuoteController::class, 'update'])->name('quote.update');
+    Route::get('/{id}', [QuoteController::class, 'show'])->name('quote.show');
+});
+
 // chat page
 Route::prefix('chatbot')->group(function () {
     Route::get('/index', [ChatController::class, 'index'])->name('chatbot.index');
     Route::post('/chat', [ChatController::class, 'chat'])->name('chatbot.talk');
 });
+
 
 
 
