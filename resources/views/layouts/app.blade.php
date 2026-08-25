@@ -17,6 +17,9 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
     @stack('styles')
@@ -36,6 +39,8 @@
 
         {{-- Page Content --}}
         <main class="main-content">
+
+            @yield('content_header')
 
             @yield('content')
 
