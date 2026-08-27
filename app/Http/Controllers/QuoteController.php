@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quote;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -393,5 +394,18 @@ class QuoteController extends Controller
             'admin_panel.quote.show',
             compact('quote')
         );
+    }
+
+    public function downloadPdf($id)
+    {
+        $quote = Quote::with('items')->findOrFail($id);
+
+        $pdf = Pdf::loadView('admin_panel.quote.quote-pdf', compact('quote'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('Quote-' . $quote->quote_number . '.pdf');
+
+        // Or to open inline in the browser instead of forcing a download:
+        // return $pdf->stream('Quote-' . $quote->quote_number . '.pdf');
     }
 }

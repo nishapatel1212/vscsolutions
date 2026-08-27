@@ -2,7 +2,7 @@
 
     <div class="sidebar-logo">
         <a href="{{ url('dashboard') }}">
-            <img src="{{ asset('images/logo/latin_logo.jpeg') }}"
+            <img src="{{ asset('images/logo/latin_logo.png') }}"
                  alt="Latin Electrical">
         </a>
     </div>

@@ -10,14 +10,19 @@
     </div>
 
     <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-gold btn-sm">
+            <i class="fas fa-save"></i>
+            Update
+        </button>
+
         <a href="{{ route('quote.show', $quote->id) }}" class="btn btn-outline-primary">
             <i class="fas fa-eye"></i>
-            <span class="d-none d-sm-inline">View Quote</span>
+            <span class="d-none d-sm-inline">View</span>
         </a>
 
         <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left"></i>
-            <span class="d-none d-sm-inline">Back</span>
+            {{-- <span class="d-none d-sm-inline">Back</span> --}}
         </a>
     </div>
 </div>
@@ -430,19 +435,19 @@
 
     {{-- BUTTONS --}}
     <div class="text-center mb-5 d-flex flex-wrap justify-content-center gap-2">
-        <button type="submit" class="btn btn-gold btn-lg">
+        <button type="submit" class="btn btn-gold btn-sm">
             <i class="fas fa-save"></i>
-            Update Quote
+            Update
         </button>
 
-        <a href="{{ route('quote.show', $quote->id) }}" class="btn btn-outline-primary btn-lg">
+        <a href="{{ route('quote.show', $quote->id) }}" class="btn btn-outline-primary">
             <i class="fas fa-eye"></i>
-            View Quote
+            <span class="d-none d-sm-inline">View</span>
         </a>
 
-        <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary btn-lg">
-            <i class="fas fa-times"></i>
-            Cancel
+        <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            {{-- <span class="d-none d-sm-inline">Back</span> --}}
         </a>
     </div>
 

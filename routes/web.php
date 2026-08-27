@@ -57,6 +57,7 @@ Route::prefix('quote')->group(function () {
     Route::get('/{id}/edit', [QuoteController::class, 'edit'])->name('quote.edit');
     Route::put('/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::get('/{id}', [QuoteController::class, 'show'])->name('quote.show');
+    Route::get('/{id}/pdf', [QuoteController::class, 'downloadPdf'])->name('quote.pdf');
 });
 
 // chat page

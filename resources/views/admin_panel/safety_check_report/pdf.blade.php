@@ -187,7 +187,7 @@
             {{-- @if(env('CLIENT_NAME') == 'vsc')
                 <img class="cover-logo" src="{{ public_path('images/logo/vsc_logo.png') }}" alt="Logo">
             @else
-                <img class="cover-logo" src="{{ public_path('images/logo/latin_logo.jpeg') }}" alt="Latin Electrical Logo">
+                <img class="cover-logo" src="{{ public_path('images/logo/latin_logo.png') }}" alt="Latin Electrical Logo">
             @endif   --}}
         </div>
 

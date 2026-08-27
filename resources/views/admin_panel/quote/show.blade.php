@@ -4,25 +4,22 @@
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <h1 class="mb-0 page-title" style="font-size: 24px;">
+    <h1 class="mb-0 page-title" style="font-size: 22px;">
         Quote {{ $quote->quote_number }}
     </h1>
 
     <div class="d-flex flex-wrap gap-2">
-        <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('quote.index') }}" class="btn-icon-round btn-icon-gray" title="Back">
             <i class="fas fa-arrow-left"></i>
-            <span class="d-none d-sm-inline">Back</span>
         </a>
 
-        <a href="{{ route('quote.edit', $quote->id) }}" class="btn btn-outline-primary">
+        <a href="{{ route('quote.edit', $quote->id) }}" class="btn-icon-round btn-icon-gold" title="Edit">
             <i class="fas fa-edit"></i>
-            <span class="d-none d-sm-inline">Edit</span>
         </a>
 
-        <button type="button" onclick="window.print()" class="btn btn-gold">
-            <i class="fas fa-print"></i>
-            <span class="d-none d-sm-inline">Print</span>
-        </button>
+        <a href="{{ route('quote.pdf', $quote->id) }}" class="btn-icon-round btn-icon-red" title="Download PDF">
+            <i class="fas fa-file-pdf"></i>
+        </a>
     </div>
 </div>
 @endsection
@@ -30,138 +27,107 @@
 @push('styles')
 <style>
 
-    .light-navy { --local-light-navy: #eef1fb; }
-
     /* =========================================================
-       MAIN QUOTE
+       DOCUMENT SHELL
     ========================================================= */
 
     .quote-container {
         background: #ffffff;
-        padding: 45px;
-        max-width: 1200px;
+        padding: 50px;
+        width: 70%;
+        max-width: 100%;
         margin: 0 auto;
-        border-top: 7px solid var(--latin-navy);
+        border: 1px solid #e6e8ef;
     }
 
     /* =========================================================
-       LOGO
+       LOGO / TITLE
     ========================================================= */
 
     .company-logo {
-        width: 85px;
-        height: 85px;
+        width: 70%;
+        height: 50%;
         object-fit: contain;
         display: block;
     }
 
-    .logo-circle {
-        width: 85px;
-        height: 85px;
-        background: var(--latin-navy);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        border: 4px solid var(--latin-gold);
-        flex-shrink: 0;
-    }
-
-    .logo-circle img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-
-    /* =========================================================
-       COMPANY INFORMATION
-    ========================================================= */
-
-    .company-name {
-        font-size: 27px;
-        font-weight: 800;
-        color: var(--latin-navy);
-        letter-spacing: 0.5px;
-    }
-
-    .company-details {
-        color: #444;
-        line-height: 1.6;
-        font-size: 14px;
-    }
-
-    .rec-number {
-        color: var(--latin-gold);
-        font-weight: 700;
-    }
-
-    /* =========================================================
-       QUOTE TITLE
-    ========================================================= */
-
     .quote-title {
-        font-size: 42px;
-        font-weight: 800;
-        letter-spacing: 5px;
-        color: var(--latin-navy);
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        color: var(--latin-navy-deep);
         line-height: 1;
     }
 
-    .quote-title-line {
-        width: 75px;
-        height: 5px;
-        background: var(--latin-gold);
-        margin-top: 12px;
+    /* =========================================================
+       COMPANY INFO
+    ========================================================= */
+
+    .company-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--latin-navy-deep);
+    }
+
+    .company-details {
+        color: #6b7280;
+        line-height: 1.6;
+        font-size: 13px;
+    }
+
+    .rec-number {
+        color: #6b7280;
+        font-weight: 600;
     }
 
     /* =========================================================
        DIVIDER
     ========================================================= */
 
-    .gold-divider {
+    .quote-divider {
         border: 0;
-        border-top: 3px solid var(--latin-gold);
-        margin: 25px 0;
+        border-top: 1px solid #e6e8ef;
+        margin: 28px 0;
     }
 
     /* =========================================================
-       CUSTOMER / QUOTE INFORMATION
+       QUOTE TO / DETAILS
     ========================================================= */
 
     .section-label {
-        color: var(--latin-navy);
-        font-size: 13px;
-        font-weight: 800;
+        color: #9aa1b5;
+        font-size: 11px;
+        font-weight: 700;
         letter-spacing: 1px;
         margin-bottom: 8px;
+        text-transform: uppercase;
     }
 
     .customer-name {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
-        color: var(--latin-navy);
+        color: var(--latin-navy-deep);
     }
 
     .customer-details {
         line-height: 1.7;
         color: #444;
-    }
-
-    .quote-info {
-        border-left: 4px solid var(--latin-gold);
-        padding-left: 18px;
+        font-size: 14px;
     }
 
     .quote-info-row {
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+        font-size: 14px;
     }
 
     .quote-info-label {
-        color: var(--latin-navy);
-        font-weight: 700;
+        color: #9aa1b5;
+        font-weight: 600;
         display: inline-block;
         min-width: 85px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     /* =========================================================
@@ -169,32 +135,27 @@
     ========================================================= */
 
     .quote-table {
-        margin-top: 25px;
-        border: 1px solid #d9dce8;
+        margin-top: 8px;
     }
 
     .quote-table thead th {
-        background: var(--latin-navy);
-        color: #ffffff;
-        border-color: var(--latin-navy);
-        font-size: 13px;
+        background: none;
+        color: #9aa1b5;
+        border: none;
+        border-bottom: 2px solid var(--latin-navy-deep);
+        font-size: 11px;
         letter-spacing: 0.5px;
-        padding: 13px;
+        text-transform: uppercase;
+        font-weight: 700;
+        padding: 10px 12px;
         vertical-align: middle;
     }
 
     .quote-table tbody td {
-        padding: 13px;
-        vertical-align: middle;
-        border-color: #d9dce8;
-    }
-
-    .quote-table tbody tr:nth-child(even) {
-        background: #f8f9fd;
-    }
-
-    .quote-table tbody tr:hover {
-        background: #fff6e5;
+        padding: 14px 12px;
+        vertical-align: top;
+        border-color: #eef0f5;
+        font-size: 14px;
     }
 
     .description-cell {
@@ -210,7 +171,6 @@
 
     .quantity-cell {
         text-align: center;
-        font-weight: 600;
     }
 
     /* =========================================================
@@ -218,75 +178,66 @@
     ========================================================= */
 
     .totals-table {
-        margin-top: 25px;
+        margin-top: 8px;
         border: none;
     }
 
     .totals-table th {
-        color: var(--latin-navy);
+        color: #6b7280;
+        font-weight: 600;
+        font-size: 13px;
         border: none;
-        padding: 9px 12px;
+        padding: 8px 12px;
     }
 
     .totals-table td {
         border: none;
-        padding: 9px 12px;
+        padding: 8px 12px;
+        font-size: 14px;
     }
 
-    .total-row {
-        border-top: 2px solid var(--latin-gold);
+    .total-row th,
+    .total-row td {
+        border-top: 2px solid var(--latin-navy-deep);
+        padding-top: 14px;
     }
 
     .grand-total {
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--latin-navy);
-    }
-
-    .grand-total td {
-        background: #eef1fb;
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--latin-navy-deep);
     }
 
     /* =========================================================
-       PAYMENT
+       PAYMENT / NOTES — plain, no fill colors
     ========================================================= */
 
-    .payment-box {
-        background: #eef1fb;
-        border-left: 5px solid var(--latin-gold);
-        padding: 20px;
-        margin-top: 25px;
+    .info-block {
+        border-top: 1px solid #e6e8ef;
+        padding-top: 18px;
+        margin-top: 30px;
     }
 
-    .payment-title {
-        color: var(--latin-navy);
-        font-weight: 800;
-        font-size: 17px;
+    .info-block-title {
+        color: var(--latin-navy-deep);
+        font-weight: 700;
+        font-size: 13px;
         margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-block-body {
+        font-size: 14px;
+        color: #444;
+        line-height: 1.7;
     }
 
     .payment-reference {
-        color: var(--latin-navy);
-        font-weight: 800;
-        margin-top: 12px;
-    }
-
-    /* =========================================================
-       NOTES
-    ========================================================= */
-
-    .notes-box {
-        border-left: 5px solid var(--latin-gold);
-        padding: 20px;
-        background: #fffaf0;
-        margin-top: 25px;
-    }
-
-    .notes-title {
-        color: var(--latin-navy);
-        font-weight: 800;
-        font-size: 17px;
-        margin-bottom: 10px;
+        color: var(--latin-navy-deep);
+        font-weight: 700;
+        margin-top: 10px;
+        font-size: 13px;
     }
 
     /* =========================================================
@@ -295,21 +246,23 @@
 
     .quote-footer {
         text-align: center;
-        margin-top: 45px;
-        padding-top: 20px;
-        border-top: 2px solid var(--latin-gold);
-        color: var(--latin-navy);
-        font-weight: 700;
+        margin-top: 40px;
+        padding-top: 18px;
+        border-top: 1px solid #e6e8ef;
+        color: var(--latin-navy-deep);
+        font-weight: 600;
+        font-size: 14px;
     }
 
     .quote-footer-small {
-        font-size: 12px;
-        color: #777;
-        margin-top: 5px;
+        font-size: 11px;
+        color: #9aa1b5;
+        margin-top: 4px;
+        font-weight: 400;
     }
 
     /* =========================================================
-       RESPONSIVE (screen)
+       RESPONSIVE
     ========================================================= */
 
     @media (max-width: 991px) {
@@ -317,12 +270,12 @@
             padding: 32px;
         }
 
-        .company-details {
+        .company-details,
+        .company-name {
             text-align: left !important;
         }
 
-        .col-md-6.text-end,
-        .col-md-6.text-right {
+        .col-md-6.text-md-end {
             text-align: left !important;
             margin-top: 20px;
         }
@@ -334,30 +287,21 @@
         }
 
         .quote-title {
-            font-size: 30px;
-            letter-spacing: 3px;
+            font-size: 24px;
+            letter-spacing: 2px;
         }
 
         .company-name {
-            font-size: 21px;
+            font-size: 16px;
         }
 
-        .logo-circle {
-            width: 64px;
-            height: 64px;
+        .company-logo {
+            width: 44px;
+            height: 44px;
         }
 
         .quote-table {
             font-size: 13px;
-        }
-
-        .quote-table thead th,
-        .quote-table tbody td {
-            padding: 9px;
-        }
-
-        .grand-total {
-            font-size: 18px;
         }
     }
 
@@ -366,13 +310,12 @@
             padding: 16px;
         }
 
-        /* items table scrolls on very small screens rather than crushing columns */
         .quote-table-wrap {
             overflow-x: auto;
         }
 
         .quote-table {
-            min-width: 480px;
+            min-width: 460px;
         }
     }
 
@@ -412,17 +355,13 @@
         .quote-container {
             max-width: none;
             padding: 20px;
-            border-top: 5px solid var(--latin-navy);
+            border: none;
         }
 
         .sidebar,
         .top-navbar,
         .content-header {
             display: none !important;
-        }
-
-        .quote-table tbody tr:hover {
-            background: inherit;
         }
 
         .btn {
@@ -435,23 +374,16 @@
 
 @section('content')
 
-<div class="card shadow-sm" id="printQuote" style="border: none;">
-
-    <div class="quote-container">
+    <div class="quote-container" id="printQuote">
 
         {{-- HEADER --}}
         <div class="row align-items-center">
 
             <div class="col-md-6">
                 <div class="d-flex align-items-center">
-                    <div class="logo-circle me-3">
-                        <img src="{{ asset('images/logo/latin_logo.jpeg') }}" alt="Latin Electrical Logo" class="company-logo">
-                    </div>
+                    <img src="{{ asset('images/logo/latin_logo_dark.png') }}" alt="Latin Electrical Logo" class="company-logo me-3">
 
-                    <div>
-                        <div class="quote-title">QUOTE</div>
-                        <div class="quote-title-line"></div>
-                    </div>
+                    {{-- <div class="quote-title">QUOTE</div> --}}
                 </div>
             </div>
 
@@ -459,7 +391,7 @@
                 <div class="company-name">Latin Electrical</div>
 
                 <div class="company-details">
-                    17 Daisy Street<br>
+                    {{-- 17 Daisy Street<br> --}}
                     Officer, VIC 3809<br>
                     info@latinelectrical.com.au<br>
                     ABN 84 786 819 42<br>
@@ -469,13 +401,13 @@
 
         </div>
 
-        <hr class="gold-divider">
+        <hr class="quote-divider">
 
         {{-- CUSTOMER + QUOTE DETAILS --}}
         <div class="row mb-4">
 
             <div class="col-md-7">
-                <div class="section-label">QUOTE TO</div>
+                <div class="section-label">Quote To</div>
 
                 <div class="customer-name">{{ $quote->customer_name }}</div>
 
@@ -494,17 +426,15 @@
                 </div>
             </div>
 
-            <div class="col-md-5 mt-4 mt-md-0">
-                <div class="quote-info">
-                    <div class="quote-info-row">
-                        <span class="quote-info-label">QUOTE NO:</span>
-                        <strong>{{ $quote->quote_number }}</strong>
-                    </div>
+            <div class="col-md-5 mt-4 mt-md-0 text-md-end">
+                <div class="quote-info-row">
+                    <span class="quote-info-label">Quote No.</span><br>
+                    <strong>{{ $quote->quote_number }}</strong>
+                </div>
 
-                    <div class="quote-info-row">
-                        <span class="quote-info-label">DATE:</span>
-                        <strong>{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}</strong>
-                    </div>
+                <div class="quote-info-row">
+                    <span class="quote-info-label">Date</span><br>
+                    <strong>{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}</strong>
                 </div>
             </div>
 
@@ -515,10 +445,10 @@
             <table class="table quote-table">
                 <thead>
                     <tr>
-                        <th>ACTIVITY DESCRIPTION</th>
-                        <th width="10%" class="text-center">QTY</th>
-                        <th width="18%" class="text-end">AMOUNT</th>
-                        <th width="18%" class="text-end">TOTAL</th>
+                        <th>Activity Description</th>
+                        <th width="10%" class="text-center">Qty</th>
+                        <th width="18%" class="text-end">Amount</th>
+                        <th width="18%" class="text-end">Total</th>
                     </tr>
                 </thead>
 
@@ -540,7 +470,7 @@
             <div class="col-md-5">
                 <table class="table totals-table">
                     <tr>
-                        <th>SUBTOTAL</th>
+                        <th>Subtotal</th>
                         <td class="text-end">${{ number_format($quote->subtotal ?? 0, 2) }}</td>
                     </tr>
 
@@ -550,7 +480,7 @@
                     </tr>
 
                     <tr class="total-row">
-                        <th>TOTAL</th>
+                        <th>Total</th>
                         <td class="text-end grand-total">AUD ${{ number_format($quote->total ?? 0, 2) }}</td>
                     </tr>
                 </table>
@@ -561,13 +491,12 @@
         <div class="row">
 
             <div class="col-md-6">
-                <div class="payment-box">
-                    <div class="payment-title">
-                        <i class="fas fa-university"></i>
-                        Payment Methods
+                <div class="info-block">
+                    <div class="info-block-title">
+                        <i class="fas fa-university me-1"></i> Payment Methods
                     </div>
 
-                    <div>
+                    <div class="info-block-body">
                         <strong>Commonwealth Bank</strong><br>
                         Name: Jasmeen Patel<br>
                         BSB: 063619<br>
@@ -575,20 +504,19 @@
                     </div>
 
                     <div class="payment-reference">
-                        USE QUOTE NUMBER AS A REFERENCE.
+                        Use quote number as a reference.
                     </div>
                 </div>
             </div>
 
             @if(!empty($quote->notes))
                 <div class="col-md-6">
-                    <div class="notes-box">
-                        <div class="notes-title">
-                            <i class="fas fa-sticky-note"></i>
-                            Notes
+                    <div class="info-block">
+                        <div class="info-block-title">
+                            <i class="fas fa-sticky-note me-1"></i> Notes
                         </div>
 
-                        <div>{!! nl2br(e($quote->notes)) !!}</div>
+                        <div class="info-block-body">{!! nl2br(e($quote->notes)) !!}</div>
                     </div>
                 </div>
             @endif
@@ -606,6 +534,5 @@
 
     </div>
 
-</div>
 
 @endsection

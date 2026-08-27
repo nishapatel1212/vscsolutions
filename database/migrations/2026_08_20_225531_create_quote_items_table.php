@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained('quotes')
                 ->cascadeOnDelete();
 
-            $table->string('description');
+            $table->text('description');
 
             $table->decimal('quantity', 10, 2)->default(1);
 

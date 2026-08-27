@@ -30,11 +30,11 @@
 
         <div class="user-menu">
 
-            <div class="user-avatar">
+            {{-- <div class="user-avatar">
                 {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
-            </div>
+            </div> --}}
 
-            <div class="user-info">
+            {{-- <div class="user-info">
 
                 <strong>
                     {{ auth()->user()->name ?? 'User' }}
@@ -44,7 +44,7 @@
 
             </div>
 
-            <i class="fas fa-chevron-down"></i>
+            <i class="fas fa-chevron-down"></i> --}}
 
         </div>
 
