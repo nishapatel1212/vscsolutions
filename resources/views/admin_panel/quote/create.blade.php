@@ -6,13 +6,18 @@
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title">Create Quote</h1>
-        <p class="page-subtitle">Build a new quote for a client</p>
     </div>
 
-    <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left"></i>
-        Back
-    </a>
+    <div class="d-flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-gold btn-sm me-2">
+            <i class="fas fa-save"></i>
+            Save
+        </button>
+
+        <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
 </div>
 @endsection
 
@@ -364,14 +369,13 @@
 
     {{-- BUTTONS --}}
     <div class="text-center mb-5">
-        <button type="submit" class="btn btn-gold btn-lg me-2">
+        <button type="submit" class="btn btn-gold btn-sm me-2">
             <i class="fas fa-save"></i>
-            Save Quote
+            Save
         </button>
 
-        <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary btn-lg">
-            <i class="fas fa-times"></i>
-            Cancel
+        <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
         </a>
     </div>
 

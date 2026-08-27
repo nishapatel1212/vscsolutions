@@ -10,10 +10,9 @@
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title">Quotes</h1>
-        <p class="page-subtitle">All quotes raised for your clients</p>
     </div>
 
-    <a href="{{ route('quote.create') }}" class="btn btn-gold">
+    <a href="{{ route('quote.create') }}" class="btn btn-gold btn-sm">
         <i class="fas fa-plus"></i>
         Create Quote
     </a>
