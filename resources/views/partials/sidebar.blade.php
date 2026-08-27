@@ -37,7 +37,7 @@
 
     </div>
 
-    <div class="sidebar-bottom">
+    {{-- <div class="sidebar-bottom">
 
         <a href="{{ url('logout') }}" class="sidebar-item">
 
@@ -47,6 +47,6 @@
 
         </a>
 
-    </div>
+    </div> --}}
 
 </aside>
