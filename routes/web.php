@@ -58,6 +58,11 @@ Route::prefix('quote')->group(function () {
     Route::put('/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::get('/{id}', [QuoteController::class, 'show'])->name('quote.show');
     Route::get('/{id}/pdf', [QuoteController::class, 'downloadPdf'])->name('quote.pdf');
+
+    Route::get('/{id}/make-invoice', [QuoteController::class, 'makeInvoice'])->name('quote.makeInvoice');
+    Route::get('/{id}/invoice/edit', [QuoteController::class, 'editInvoice'])->name('quote.editInvoice');
+    Route::put('/{id}/invoice', [QuoteController::class, 'updateInvoice'])->name('quote.updateInvoice');
+    Route::get('/{id}/invoice', [QuoteController::class, 'showInvoice'])->name('quote.showInvoice');
 });
 
 // chat page

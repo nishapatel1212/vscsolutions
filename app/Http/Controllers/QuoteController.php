@@ -13,6 +13,8 @@ class QuoteController extends Controller
     public function index()
     {
         $quotes = Quote::with('items')
+            ->with('invoiceCopy')
+            ->where('type', '!=', 'invoice') // or where('type', 'quote')
             ->latest()
             ->get();
 
@@ -403,9 +405,136 @@ class QuoteController extends Controller
         $pdf = Pdf::loadView('admin_panel.quote.quote-pdf', compact('quote'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download('Quote-' . $quote->quote_number . '.pdf');
+        return $pdf->download(($quote->type === 'invoice' ? 'Invoice-' : 'Quote-') . $quote->quote_number . '.pdf');
 
         // Or to open inline in the browser instead of forcing a download:
         // return $pdf->stream('Quote-' . $quote->quote_number . '.pdf');
+    }
+
+    public function makeInvoice($id)
+    {
+        $original = Quote::with('items')->findOrFail($id);
+
+        // Safety net: never allow an invoice to be turned into another invoice
+        if ($original->type === 'invoice') {
+            return redirect()->route('quote.showInvoice', $original->id);
+        }
+
+        $existing = Quote::where('source_quote_id', $original->id)
+            ->where('type', 'invoice')
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('quote.editInvoice', $existing->id);
+        }
+
+        $invoice = Quote::create([
+            'quote_number' => 'INV-' . $original->quote_number,
+            'type' => 'invoice',
+            'source_quote_id' => $original->id,
+            'quote_date' => now()->format('Y-m-d'),
+            'customer_name' => $original->customer_name,
+            'customer_email' => $original->customer_email,
+            'customer_phone' => $original->customer_phone,
+            'customer_address' => $original->customer_address,
+            'subtotal' => $original->subtotal,
+            'tax' => $original->tax,
+            'total' => $original->total,
+            'notes' => $original->notes,
+        ]);
+
+        foreach ($original->items as $item) {
+            $invoice->items()->create([
+                'description' => $item->description,
+                'quantity' => $item->quantity,
+                'amount' => $item->amount,
+                'total' => $item->total ?? ($item->amount * $item->quantity),
+            ]);
+        }
+
+        return redirect()->route('quote.editInvoice', $invoice->id);
+    }
+
+    public function editInvoice($id)
+    {
+        $quote = Quote::with('items')->findOrFail($id);
+
+        if ($quote->type !== 'invoice') {
+            abort(404);
+        }
+
+        return view('admin_panel.quote.invoice-edit', compact('quote'));
+    }
+
+    public function updateInvoice(Request $request, $id)
+    {
+        $quote = Quote::findOrFail($id);
+
+        if ($quote->type !== 'invoice') {
+            abort(404);
+        }
+
+        $request->validate([
+            'quote_date' => 'required|date',
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'nullable|email',
+            'description' => 'required|array|min:1',
+            'description.*' => 'required|string',
+            'quantity' => 'required|array',
+            'quantity.*' => 'required|numeric|min:1',
+            'amount' => 'required|array',
+            'amount.*' => 'required|numeric|min:0',
+        ]);
+
+        $subtotal = 0;
+        $itemsData = [];
+
+        foreach ($request->description as $i => $desc) {
+            $qty = (float) $request->quantity[$i];
+            $amt = (float) $request->amount[$i];
+            $lineTotal = $qty * $amt;
+            $subtotal += $lineTotal;
+
+            $itemsData[] = [
+                'description' => $desc,
+                'quantity' => $qty,
+                'amount' => $amt,
+                'total' => $lineTotal,
+            ];
+        }
+
+        $tax = 0;
+        $grandTotal = $subtotal + $tax;
+
+        $quote->update([
+            'quote_date' => $request->quote_date,
+            'customer_name' => $request->customer_name,
+            'customer_email' => $request->customer_email,
+            'customer_phone' => $request->customer_phone,
+            'customer_address' => $request->customer_address,
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'total' => $grandTotal,
+            'notes' => $request->notes,
+        ]);
+
+        $quote->items()->delete();
+        foreach ($itemsData as $item) {
+            $quote->items()->create($item);
+        }
+
+        return redirect()->route('quote.showInvoice', $quote->id)
+            ->with('success', 'Invoice updated successfully.');
+    }
+
+    public function showInvoice($id)
+    {
+        $quote = Quote::with('items')->findOrFail($id);
+
+        if ($quote->type !== 'invoice') {
+            abort(404);
+        }
+
+        return view('admin_panel.quote.show', ['quote' => $quote]); // reuse your existing Show page as-is
     }
 }

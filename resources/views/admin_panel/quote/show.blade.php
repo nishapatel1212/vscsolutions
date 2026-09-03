@@ -5,7 +5,7 @@
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
     <h1 class="mb-0 page-title" style="font-size: 22px;">
-        Quote {{ $quote->quote_number }}
+        {{ $quote->type === 'invoice' ? 'Invoice' : 'Quote' }} {{ $quote->quote_number }}
     </h1>
 
     <div class="d-flex flex-wrap gap-2">
@@ -428,7 +428,7 @@
 
             <div class="col-md-5 mt-4 mt-md-0 text-md-end">
                 <div class="quote-info-row">
-                    <span class="quote-info-label">Quote No.</span><br>
+                    <div class="quote-info-label">{{ $quote->type === 'invoice' ? 'Invoice No.' : 'Quote No.' }}</div>
                     <strong>{{ $quote->quote_number }}</strong>
                 </div>
 

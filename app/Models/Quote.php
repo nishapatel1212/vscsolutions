@@ -17,6 +17,8 @@ class Quote extends Model
         'tax',
         'total',
         'notes',
+        'type',
+        'source_quote_id'
     ];
 
     protected $casts = [
@@ -29,5 +31,10 @@ class Quote extends Model
     public function items()
     {
         return $this->hasMany(QuoteItem::class);
+    }
+
+    public function invoiceCopy()
+    {
+        return $this->hasOne(Quote::class, 'source_quote_id')->where('type', 'invoice');
     }
 }

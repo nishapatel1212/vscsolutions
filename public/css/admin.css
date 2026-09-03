@@ -656,3 +656,15 @@ table.dataTable {
 .btn-icon-red {
     background: #E74C3C;
 }
+
+.btn-icon-invoice:hover {
+    background: #2ECC71;
+    border-color: #2ECC71;
+    color: #fff;
+}
+
+.btn-icon-view-invoice:hover {
+    background: var(--latin-navy);
+    border-color: var(--latin-navy);
+    color: #fff;
+}

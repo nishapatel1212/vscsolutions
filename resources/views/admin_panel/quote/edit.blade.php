@@ -5,7 +5,7 @@
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
-        <h1 class="page-title">Edit Quote</h1>
+        <h1 class="page-title">{{ $quote->type === 'invoice' ? 'Edit Invoice' : 'Edit Quote' }}</h1>
         <p class="page-subtitle">Quote #{{ $quote->quote_number }}</p>
     </div>
 
@@ -211,7 +211,7 @@
             <div class="row g-3">
 
                 <div class="col-md-6">
-                    <label class="form-label">Quote Number</label>
+                    <label class="form-label">{{ $quote->type === 'invoice' ? 'Invoice Number' : 'Quote Number' }}</label>
                     <input type="text" class="form-control" value="{{ $quote->quote_number }}" readonly>
                 </div>
 

@@ -9,7 +9,7 @@
         <p class="dashboard-subtitle">Welcome to Latin Electrical</p>
     </div>
 
-    <a href="{{ route('quote.create') }}" class="btn btn-gold">
+    <a href="{{ route('quote.create') }}" class="btn btn-gold btn-sm">
         <i class="fas fa-plus"></i>
         Create Quote
     </a>

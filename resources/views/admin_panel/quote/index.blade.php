@@ -84,12 +84,29 @@
                         </td>
 
                         <td class="text-end">
-                            <a href="{{ route('quote.show', $quote->id) }}" class="btn-icon" title="View">
+                            <a href="{{ route('quote.show', $quote->id) }}" class="btn-icon" title="View Quote">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('quote.edit', $quote->id) }}" class="btn-icon btn-icon-edit" title="Edit">
+
+                            <a href="{{ route('quote.edit', $quote->id) }}" class="btn-icon btn-icon-edit" title="Edit Quote">
                                 <i class="fas fa-edit"></i>
                             </a>
+
+                            <a href="{{ route('quote.pdf', $quote->id) }}" class="btn-icon btn-icon-pdf" title="Download PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+
+                            @if($quote->type === 'invoice')
+                                {{-- This row IS an invoice already — no invoice-creation controls --}}
+                            @elseif($quote->invoiceCopy)
+                                <a href="{{ route('quote.showInvoice', $quote->invoiceCopy->id) }}" class="btn-icon btn-icon-view-invoice" title="View Invoice">
+                                    <i class="fas fa-file-invoice"></i>
+                                </a>
+                            @else
+                                <a href="{{ route('quote.makeInvoice', $quote->id) }}" class="btn-icon btn-icon-invoice" title="Create Invoice">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </a>
+                            @endif
                         </td>
                     </tr>
                 @empty
