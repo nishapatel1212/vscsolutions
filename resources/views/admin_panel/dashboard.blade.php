@@ -6,7 +6,6 @@
 <div class="d-flex justify-content-between align-items-center">
     <div>
         <h1 class="dashboard-title">Dashboard</h1>
-        <p class="dashboard-subtitle">Welcome to Latin Electrical</p>
     </div>
 
     <a href="{{ route('quote.create') }}" class="btn btn-gold btn-sm">
@@ -390,9 +389,19 @@ body {
                                 <td>{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}</td>
                                 <td class="text-end fw-bold">${{ number_format($quote->total ?? 0, 2) }}</td>
                                 <td class="text-end">
-                                    <a href="{{ route('quote.show', $quote->id) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ route('quote.show', $quote->id) }}" class="btn btn-sm btn-outline-primary" title="View Quote">
                                         <i class="fas fa-eye"></i>
                                     </a>
+
+                                    <a href="{{ route('quote.pdf', $quote->id) }}" class="btn btn-sm btn-outline-primary" title="Download Quote PDF">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+
+                                    @if($quote->invoiceCopy)
+                                        <a href="{{ route('quote.pdf', $quote->invoiceCopy->id) }}" class="btn btn-sm btn-outline-primary" title="Download Invoice PDF">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

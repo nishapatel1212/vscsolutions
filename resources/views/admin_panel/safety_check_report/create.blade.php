@@ -5,7 +5,6 @@
 @section('content_header')
 <div>
     <h1 class="page-title">Create Safety Check Report</h1>
-    <p class="page-subtitle">Complete all sections below to generate a report</p>
 </div>
 @endsection
 

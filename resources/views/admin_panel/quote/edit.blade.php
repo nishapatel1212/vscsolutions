@@ -6,7 +6,6 @@
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title">{{ $quote->type === 'invoice' ? 'Edit Invoice' : 'Edit Quote' }}</h1>
-        <p class="page-subtitle">Quote #{{ $quote->quote_number }}</p>
     </div>
 
     <div class="d-flex flex-wrap gap-2">

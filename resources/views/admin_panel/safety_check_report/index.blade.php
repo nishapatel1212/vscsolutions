@@ -6,7 +6,6 @@
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
         <h1 class="page-title">Safety Check Reports</h1>
-        <p class="page-subtitle">All completed and pending safety checks</p>
     </div>
 
     <a href="{{ route('safetycheckreport.create') }}" class="btn btn-gold">

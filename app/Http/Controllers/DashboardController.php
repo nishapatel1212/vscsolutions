@@ -9,28 +9,22 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Melbourne timezone
         $now = Carbon::now('Australia/Melbourne');
 
-        // Total quotes
-        $totalQuotes = Quote::count();
+        // Only count actual quotes, not invoices
+        $totalQuotes = Quote::where('type', '!=', 'invoice')->count();
 
-        // Quotes created this month
-        $monthlyQuotes = Quote::whereYear(
-            'quote_date',
-            $now->year
-        )
-            ->whereMonth(
-                'quote_date',
-                $now->month
-            )
+        $monthlyQuotes = Quote::where('type', '!=', 'invoice')
+            ->whereYear('quote_date', $now->year)
+            ->whereMonth('quote_date', $now->month)
             ->count();
 
-        // Total value of all quotes
-        $totalQuoteValue = Quote::sum('total');
+        $totalQuoteValue = Quote::where('type', '!=', 'invoice')->sum('total');
 
-        // Recent quotes
-        $recentQuotes = Quote::latest('id')
+        // Recent quotes, each with its invoice (if any) eager loaded
+        $recentQuotes = Quote::with('invoiceCopy')
+            ->where('type', '!=', 'invoice')
+            ->latest('id')
             ->take(5)
             ->get();
 
