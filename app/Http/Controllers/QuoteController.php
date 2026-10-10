@@ -537,4 +537,71 @@ class QuoteController extends Controller
 
         return view('admin_panel.quote.show', ['quote' => $quote]); // reuse your existing Show page as-is
     }
+
+    public function aiDraft(Request $request)
+    {
+        $jobDescription = escapeshellarg($request->job_description);
+        $scriptPath = base_path('python-scripts/quote_ai.py');
+        $pythonPath = 'C:\\Users\\patel\\AppData\\Local\\Python\\bin\\python.exe'; // paste YOUR path here
+
+        $output = shell_exec("\"$pythonPath\" \"$scriptPath\" $jobDescription");
+
+        $data = json_decode($output, true);
+
+        return response()->json($data);
+    }
+
+    public function checkPrice(Request $request)
+    {
+        $request->validate([
+            'description' => 'required|string',
+            'quantity' => 'required|numeric',
+            'amount' => 'required|numeric',
+        ]);
+
+        try {   
+            $pythonPath = 'C:\\Users\\patel\\AppData\\Local\\Python\\bin\\python.exe'; // paste YOUR path here
+            $scriptPath = base_path('python-scripts\\pricing_anomaly.py');
+
+            $description = escapeshellarg($request->description);
+            $quantity = escapeshellarg($request->quantity);
+            $amount = escapeshellarg($request->amount);
+
+            $command = "$pythonPath \"$scriptPath\" --check $description $quantity $amount 2>&1";
+            $output = shell_exec($command);
+
+            if ($output === null) {
+                throw new \Exception('shell_exec returned null - command may have failed to execute.');
+            }
+
+            $result = json_decode($output, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !$result) {
+                \Log::error('Pricing check: invalid JSON from Python script', [
+                    'raw_output' => $output,
+                    'command' => $command,
+                ]);
+
+                return response()->json([
+                    'flagged' => false,
+                    'note' => 'Could not run pricing check.',
+                ]);
+            }
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+
+            \Log::error('Pricing check failed', [
+                'error' => $e->getMessage(),
+                'description' => $request->description,
+                'quantity' => $request->quantity,
+                'amount' => $request->amount,
+            ]);
+
+            return response()->json([
+                'flagged' => false,
+                'note' => 'Pricing check unavailable right now.',
+            ]);
+        }
+    }
 }

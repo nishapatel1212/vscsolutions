@@ -20,19 +20,20 @@
 
         <a href="{{ url('safetycheck/index') }}"
            class="sidebar-item {{ request()->is('safetycheck/*') ? 'active' : '' }}">
-
             <i class="fas fa-file-signature"></i>
-
             <span>Safety Check</span>
         </a>
 
 
         <a href="{{ url('quote/index') }}"
            class="sidebar-item {{ request()->is('quote/*') ? 'active' : '' }}">
-
             <i class="fas fa-file-invoice-dollar"></i>
-
             <span>Quotes</span>
+        </a>
+
+        <a href="{{ url('customer') }}" class="sidebar-item {{ request()->is('customer*') ? 'active' : '' }}">
+            <i class="fas fa-users"></i>
+            <span>Customers</span>
         </a>
 
     </div>

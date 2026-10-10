@@ -139,6 +139,7 @@
     </div>
 @endif
 
+
 @if($errors->any())
     <div class="alert-soft alert-danger mb-3" style="align-items: flex-start;">
         <i class="fas fa-exclamation-circle mt-1"></i>
@@ -248,7 +249,13 @@
             <button type="button" class="add-item-btn" id="addItem">
                 <i class="fas fa-plus me-1"></i> Add Item
             </button>
+            <button type="button" class="add-item-btn" id="aiGenerate">
+                <i class="fas fa-magic me-1"></i> Generate with AI
+            </button>
+            <input type="text" id="jobDescInput" class="form-control d-none" placeholder="Describe the job...">
         </div>
+
+        <div id="aiAlertContainer"></div>
 
         <div class="p-4">
             <div class="table-responsive">
@@ -287,6 +294,9 @@
                                 </div>
                             </td>
                             <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-primary check-price-btn" title="Check AI Price">
+        <i class="fas fa-magnifying-glass-dollar"></i>
+    </button>
                                 <button type="button" class="remove-item-btn remove-item" title="Remove Item">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -389,6 +399,61 @@
 <script>
 $(document).ready(function () {
 
+    $('#aiGenerate').on('click', function () {
+        let desc = prompt("Describe the job:");
+        if (!desc) return;
+
+        $.post("{{ route('quote.aiDraft') }}", {
+            _token: "{{ csrf_token() }}",
+            job_description: desc
+        }, function (data) {
+
+            if (!data.items || data.items.length === 0) {
+                showAiAlert('warning', 'No matching services found for that description. Try different wording or add items manually.');
+                return;
+            }
+
+            data.items.forEach(function (item) {
+                let row = `
+                    <tr class="quote-item-row">
+                        <td><textarea name="description[]" class="form-control description" rows="3" required>${item.description}</textarea></td>
+                        <td><input type="number" name="quantity[]" class="form-control quantity" value="${item.quantity}" min="1" step="1" required></td>
+                        <td><div class="input-group"><span class="input-group-text">$</span><input type="number" name="amount[]" class="form-control amount" value="${item.amount}" min="0" step="0.01" required></div></td>
+                        <td><div class="input-group"><span class="input-group-text">$</span><input type="text" class="form-control item-total item-total-input" value="0.00" readonly></div></td>
+                        <td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary check-price-btn" title="Check AI Price">
+                            <i class="fas fa-magnifying-glass-dollar"></i>
+                        </button><button type="button" class="remove-item-btn remove-item"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+                $('#quoteItems').append(row);
+            });
+            calculateTotals();
+            showAiAlert('success', `${data.items.length} item(s) added from AI suggestion.`);
+
+        }).fail(function () {
+            showAiAlert('danger', 'Something went wrong generating the quote. Please try again.');
+        });
+    });
+
+    function showAiAlert(type, message) {
+        // type: 'success', 'danger', or 'warning'
+        const icon = type === 'success' ? 'fa-check-circle'
+                : type === 'danger' ? 'fa-exclamation-triangle'
+                : 'fa-exclamation-circle';
+
+        const alertHtml = `
+            <div class="alert-soft alert-${type} mb-3 ai-alert">
+                <i class="fas ${icon}"></i>
+                ${message}
+            </div>`;
+
+        $('#aiAlertContainer').html(alertHtml);
+
+        // Auto remove after 4 seconds
+        setTimeout(function () {
+            $('.ai-alert').fadeOut(300, function () { $(this).remove(); });
+        }, 4000);
+    }
+
     function calculateTotals() {
         let subtotal = 0;
 
@@ -434,6 +499,9 @@ $(document).ready(function () {
                     </div>
                 </td>
                 <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-primary check-price-btn" title="Check AI Price">
+                        <i class="fas fa-magnifying-glass-dollar"></i>
+                    </button>
                     <button type="button" class="remove-item-btn remove-item" title="Remove Item">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -458,6 +526,42 @@ $(document).ready(function () {
 
     $(document).on('input', '.quantity, .amount', function () {
         calculateTotals();
+    });
+
+    $(document).on('click', '.check-price-btn', function () {
+        let row = $(this).closest('.quote-item-row');
+        let description = row.find('.description').val();
+        let quantity = row.find('.quantity').val();
+        let amount = row.find('.amount').val();
+
+        if (!description || !quantity || !amount) {
+            showAiAlert('warning', 'Fill in description, quantity, and amount before checking the price.');
+            return;
+        }
+
+        let $btn = $(this);
+        $btn.prop('disabled', true).find('i').removeClass('fa-magnifying-glass-dollar').addClass('fa-spinner fa-spin');
+
+        $.post("{{ route('quote.checkPrice') }}", {
+            _token: "{{ csrf_token() }}",
+            description: description,
+            quantity: quantity,
+            amount: amount
+        }, function (data) {
+            if (data.flagged) {
+                showAiAlert('warning',
+                    `This price looks unusual for "${description}" — expected around $${data.predicted_amount}, you entered $${data.proposed_amount}.`);
+            } else if (data.note) {
+                showAiAlert('success', data.note);
+            } else {
+                showAiAlert('success', 'Price looks in line with past quotes.');
+            }
+        }).fail(function (xhr) {
+            console.error('checkPrice failed:', xhr.status, xhr.responseText);
+            showAiAlert('danger', 'Price check failed — please try again.');
+        }).always(function () {
+            $btn.prop('disabled', false).find('i').removeClass('fa-spinner fa-spin').addClass('fa-magnifying-glass-dollar');
+        });
     });
 
     calculateTotals();

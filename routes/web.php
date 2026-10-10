@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuoteController;
@@ -63,6 +64,18 @@ Route::prefix('quote')->group(function () {
     Route::get('/{id}/invoice/edit', [QuoteController::class, 'editInvoice'])->name('quote.editInvoice');
     Route::put('/{id}/invoice', [QuoteController::class, 'updateInvoice'])->name('quote.updateInvoice');
     Route::get('/{id}/invoice', [QuoteController::class, 'showInvoice'])->name('quote.showInvoice');
+
+    Route::post('/quotes/ai-draft', [QuoteController::class, 'aiDraft'])->name('quote.aiDraft');
+});
+
+Route::prefix('customer')->group(function () {
+    Route::get('/', [CustomerController::class, 'index'])->name('customer.index');
+    Route::get('/create', [CustomerController::class, 'create'])->name('customer.create');
+    Route::post('/store', [CustomerController::class, 'store'])->name('customer.store');
+    Route::get('/{id}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+    Route::put('/{id}', [CustomerController::class, 'update'])->name('customer.update');
+    Route::get('/{id}', [CustomerController::class, 'show'])->name('customer.show');
+    Route::delete('/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
 });
 
 // chat page
@@ -71,7 +84,7 @@ Route::prefix('chatbot')->group(function () {
     Route::post('/chat', [ChatController::class, 'chat'])->name('chatbot.talk');
 });
 
-
+Route::post('/quotes/check-price', [QuoteController::class, 'checkPrice'])->name('quote.checkPrice');
 
 
 
