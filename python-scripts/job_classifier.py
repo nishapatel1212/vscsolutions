@@ -54,6 +54,14 @@ def reload_keywords():
 
 
 if __name__ == "__main__":
+    import sys
+    import json
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--classify":
+        description = sys.argv[2]
+        print(json.dumps({"job_type": classify_job_type(description)}))
+        sys.exit(0)
+
     # Quick manual test: py job_classifier.py
     keywords = _load_keywords()
     print(f"Loaded {len(keywords)} active keyword(s) from job_type_keywords.\n")

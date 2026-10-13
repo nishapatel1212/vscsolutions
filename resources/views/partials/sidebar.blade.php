@@ -36,6 +36,16 @@
             <span>Customers</span>
         </a>
 
+        <a href="{{ url('jobs') }}" class="sidebar-item {{ request()->is('jobs*') ? 'active' : '' }}">
+            <i class="fas fa-calendar-check"></i>
+            <span>Jobs</span>
+        </a>
+
+        <a href="{{ url('leads') }}" class="sidebar-item {{ request()->is('leads*') ? 'active' : '' }}">
+            <i class="fas fa-inbox"></i>
+            <span>Leads</span>
+        </a>
+
     </div>
 
     {{-- <div class="sidebar-bottom">

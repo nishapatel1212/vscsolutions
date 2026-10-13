@@ -31,8 +31,9 @@
     </div>
 @endif
 
-<form action="{{ route('customer.store') }}" method="POST">
+<form action="{{ route('customer.update', $data->id) }}" method="POST">
     @csrf
+    @method('PUT')
 
     <div class="panel mb-4">
         <div class="panel-header">

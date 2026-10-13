@@ -238,6 +238,24 @@
         <div class="p-4">
             <div class="row g-3">
 
+                <div class="col-md-12">
+                    <label class="form-label">Existing Customer</label>
+                    <select id="customerSelect" name="customer_id" class="form-control">
+                        <option value="">-- New / one-off customer --</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}"
+                                data-name="{{ $customer->name }}"
+                                data-email="{{ $customer->email }}"
+                                data-phone="{{ $customer->phone }}"
+                                data-address="{{ $customer->address }}"
+                                {{ old('customer_id', $quote->customer_id) == $customer->id ? 'selected' : '' }}>
+                                {{ $customer->name }} @if($customer->phone) ({{ $customer->phone }}) @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    <small class="text-muted">Pick an existing customer to auto-fill details, or leave blank and type below.</small>
+                </div>
+
                 <div class="col-md-6">
                     <label class="form-label">Customer Name <span class="required">*</span></label>
                     <input type="text" name="customer_name"
@@ -459,6 +477,22 @@
 
 <script>
 $(document).ready(function () {
+
+    $('#customerSelect').on('change', function () {
+        let opt = $(this).find('option:selected');
+
+        $('input[name="customer_name"]').val(opt.data('name') || '');
+        $('input[name="customer_email"]').val(opt.data('email') || '');
+        $('input[name="customer_phone"]').val(opt.data('phone') || '');
+        $('textarea[name="customer_address"]').val(opt.data('address') || '');
+    });
+
+    $(document).on('input', 'input[name="customer_name"]', function () {
+        let selected = $('#customerSelect').find('option:selected');
+        if (selected.val() && $(this).val() !== selected.data('name')) {
+            $('#customerSelect').val('');
+        }
+    });
 
     function calculateTotals() {
         let subtotal = 0;

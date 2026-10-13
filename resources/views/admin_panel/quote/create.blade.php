@@ -194,6 +194,24 @@
         <div class="p-4">
             <div class="row g-3">
 
+                <div class="col-md-12">
+                    <label class="form-label">Existing Customer</label>
+                    <select id="customerSelect" name="customer_id" class="form-control">
+                        <option value="">-- New / one-off customer --</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}"
+                                data-name="{{ $customer->name }}"
+                                data-email="{{ $customer->email }}"
+                                data-phone="{{ $customer->phone }}"
+                                data-address="{{ $customer->address }}"
+                                {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                {{ $customer->name }} @if($customer->phone) ({{ $customer->phone }}) @endif
+                            </option>
+                        @endforeach
+                    </select>
+                    <small class="text-muted">Pick an existing customer to auto-fill details, or leave blank and type below.</small>
+                </div>
+
                 <div class="col-md-6">
                     <label class="form-label">Customer Name <span class="required">*</span></label>
                     <input type="text" name="customer_name"
@@ -249,13 +267,21 @@
             <button type="button" class="add-item-btn" id="addItem">
                 <i class="fas fa-plus me-1"></i> Add Item
             </button>
-            <button type="button" class="add-item-btn" id="aiGenerate">
-                <i class="fas fa-magic me-1"></i> Generate with AI
-            </button>
-            <input type="text" id="jobDescInput" class="form-control d-none" placeholder="Describe the job...">
         </div>
 
-        <div id="aiAlertContainer"></div>
+        <div class="p-4 pb-0">
+            <label class="form-label">Generate items with AI</label>
+            <div class="input-group">
+                <input type="text" id="jobDescInput" class="form-control"
+                       placeholder="e.g. Install 3 downlights and a ceiling fan in the living room">
+                <button type="button" class="btn btn-gold" id="aiGenerate">
+                    <i class="fas fa-magic me-1" id="aiGenerateIcon"></i>
+                    <span id="aiGenerateLabel">Generate</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="aiAlertContainer" class="px-4"></div>
 
         <div class="p-4">
             <div class="table-responsive">
@@ -399,9 +425,33 @@
 <script>
 $(document).ready(function () {
 
-    $('#aiGenerate').on('click', function () {
-        let desc = prompt("Describe the job:");
-        if (!desc) return;
+    $('#customerSelect').on('change', function () {
+        let opt = $(this).find('option:selected');
+
+        $('input[name="customer_name"]').val(opt.data('name') || '');
+        $('input[name="customer_email"]').val(opt.data('email') || '');
+        $('input[name="customer_phone"]').val(opt.data('phone') || '');
+        $('textarea[name="customer_address"]').val(opt.data('address') || '');
+    });
+
+    // If staff edits the name after picking a customer, treat it as a different person
+    $(document).on('input', 'input[name="customer_name"]', function () {
+        let selected = $('#customerSelect').find('option:selected');
+        if (selected.val() && $(this).val() !== selected.data('name')) {
+            $('#customerSelect').val('');
+        }
+    });
+
+    function runAiGenerate() {
+        let desc = $('#jobDescInput').val().trim();
+        if (!desc) {
+            showAiAlert('warning', 'Describe the job first, then click Generate.');
+            return;
+        }
+
+        let $btn = $('#aiGenerate').prop('disabled', true);
+        $('#aiGenerateIcon').removeClass('fa-magic').addClass('fa-spinner fa-spin');
+        $('#aiGenerateLabel').text('Generating...');
 
         $.post("{{ route('quote.aiDraft') }}", {
             _token: "{{ csrf_token() }}",
@@ -428,13 +478,27 @@ $(document).ready(function () {
             });
             calculateTotals();
             showAiAlert('success', `${data.items.length} item(s) added from AI suggestion.`);
+            $('#jobDescInput').val('');
 
         }).fail(function () {
             showAiAlert('danger', 'Something went wrong generating the quote. Please try again.');
+        }).always(function () {
+            $btn.prop('disabled', false);
+            $('#aiGenerateIcon').removeClass('fa-spinner fa-spin').addClass('fa-magic');
+            $('#aiGenerateLabel').text('Generate');
         });
+    }
+
+    $('#aiGenerate').on('click', runAiGenerate);
+
+    $('#jobDescInput').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            runAiGenerate();
+        }
     });
 
-    function showAiAlert(type, message) {
+    function showAiAlert(type, message, sticky = false) {
         // type: 'success', 'danger', or 'warning'
         const icon = type === 'success' ? 'fa-check-circle'
                 : type === 'danger' ? 'fa-exclamation-triangle'
@@ -448,10 +512,11 @@ $(document).ready(function () {
 
         $('#aiAlertContainer').html(alertHtml);
 
-        // Auto remove after 4 seconds
-        setTimeout(function () {
-            $('.ai-alert').fadeOut(300, function () { $(this).remove(); });
-        }, 4000);
+        if (!sticky) {
+            setTimeout(function () {
+                $('.ai-alert').fadeOut(300, function () { $(this).remove(); });
+            }, 4000);
+        }
     }
 
     function calculateTotals() {
@@ -561,6 +626,74 @@ $(document).ready(function () {
             showAiAlert('danger', 'Price check failed — please try again.');
         }).always(function () {
             $btn.prop('disabled', false).find('i').removeClass('fa-spinner fa-spin').addClass('fa-magnifying-glass-dollar');
+        });
+    });
+
+    $('#quoteForm').on('submit', function (e) {
+        if ($(this).data('priceConfirmed')) {
+            return; // already confirmed, let it through
+        }
+
+        e.preventDefault();
+        let $form = $(this);
+        let checks = [];
+
+        $('#quoteItems .quote-item-row').each(function () {
+            let row = $(this);
+            let description = row.find('.description').val();
+            let quantity = row.find('.quantity').val();
+            let amount = row.find('.amount').val();
+
+            if (!description || !quantity || !amount) return;
+
+            checks.push(
+                $.post("{{ route('quote.checkPrice') }}", {
+                    _token: "{{ csrf_token() }}",
+                    description: description,
+                    quantity: quantity,
+                    amount: amount
+                }).then(function (data) {
+                    return { description: description, result: data };
+                })
+            );
+        });
+
+        if (checks.length === 0) {
+            $form.data('priceConfirmed', true).trigger('submit');
+            return;
+        }
+
+        let $submitBtns = $form.find('button[type="submit"]').prop('disabled', true);
+
+        $.when.apply($, checks).always(function () {
+            let results = Array.from(arguments);
+            let flagged = results.filter(r => r && r.result && r.result.flagged);
+
+            $submitBtns.prop('disabled', false);
+
+            if (flagged.length === 0) {
+                $form.data('priceConfirmed', true).trigger('submit');
+                return;
+            }
+
+            let lines = flagged.map(f =>
+                `<li>"${f.description}" — expected ~$${f.result.predicted_amount}, entered $${f.result.proposed_amount} (${f.result.difference_pct}%)</li>`
+            ).join('');
+
+            showAiAlert('warning',
+                `<strong>${flagged.length} item(s) have unusual pricing:</strong>
+                <ul class="mb-2 mt-1 ps-3">${lines}</ul>
+                <button type="button" class="btn btn-sm btn-outline-danger me-2" id="saveAnywayBtn">Save Anyway</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="reviewPricesBtn">Review Prices</button>`
+            , true);
+        });
+
+        $(document).off('click', '#saveAnywayBtn').on('click', '#saveAnywayBtn', function () {
+            $form.data('priceConfirmed', true).trigger('submit');
+        });
+
+        $(document).off('click', '#reviewPricesBtn').on('click', '#reviewPricesBtn', function () {
+            $('.ai-alert').remove();
         });
     });
 

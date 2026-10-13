@@ -75,6 +75,11 @@ def generate_quote(job_description):
     return items
 
 if __name__ == "__main__":
-    job_description = sys.argv[1]  # gets text passed in from Laravel
-    result = generate_quote(job_description)
-    print(json.dumps({"items": result}))
+    if len(sys.argv) > 1 and sys.argv[1] == "--dump-price-list":
+        # Lets PHP (e.g. the chatbot) reuse this same price list instead of
+        # keeping a second copy in sync by hand.
+        print(json.dumps(price_list))
+    else:
+        job_description = sys.argv[1]  # gets text passed in from Laravel
+        result = generate_quote(job_description)
+        print(json.dumps({"items": result}))

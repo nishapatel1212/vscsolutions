@@ -20,6 +20,12 @@
         <a href="{{ route('quote.pdf', $quote->id) }}" class="btn-icon-round btn-icon-red" title="Download PDF">
             <i class="fas fa-file-pdf"></i>
         </a>
+
+        @if($quote->type !== 'invoice')
+            <a href="{{ route('jobs.create', ['quote_id' => $quote->id]) }}" class="btn-icon-round btn-icon-gold" title="Schedule Job">
+                <i class="fas fa-calendar-check"></i>
+            </a>
+        @endif
     </div>
 </div>
 @endsection

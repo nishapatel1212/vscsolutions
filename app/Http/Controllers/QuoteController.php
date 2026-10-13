@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Quote;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -30,9 +31,11 @@ class QuoteController extends Controller
         // Example: 20082026A
         $quoteNumber = now()->format('dmY') . 'A';
 
+        $customers = Customer::orderBy('name')->get();
+
         return view(
             'admin_panel.quote.create',
-            compact('quoteNumber')
+            compact('quoteNumber', 'customers')
         );
     }
 
@@ -42,6 +45,8 @@ class QuoteController extends Controller
         $request->validate([
 
             'quote_date' => 'required|date',
+
+            'customer_id' => 'nullable|exists:customers,id',
 
             'customer_name' => 'required|string|max:255',
 
@@ -153,6 +158,8 @@ class QuoteController extends Controller
 
                 'quote_date' => $request->quote_date,
 
+                'customer_id' => $request->customer_id,
+
                 'customer_name' => $request->customer_name,
 
                 'customer_email' => $request->customer_email,
@@ -227,9 +234,11 @@ class QuoteController extends Controller
     {
         $quote = Quote::with('items')->findOrFail($id);
 
+        $customers = Customer::orderBy('name')->get();
+
         return view(
             'admin_panel.quote.edit',
-            compact('quote')
+            compact('quote', 'customers')
         );
     }
 
@@ -238,6 +247,8 @@ class QuoteController extends Controller
         $request->validate([
 
             'quote_date' => 'required|date',
+
+            'customer_id' => 'nullable|exists:customers,id',
 
             'customer_name' => 'required|string|max:255',
 
@@ -308,6 +319,8 @@ class QuoteController extends Controller
             $quote->update([
 
                 'quote_date' => $request->quote_date,
+
+                'customer_id' => $request->customer_id,
 
                 'customer_name' => $request->customer_name,
 
@@ -541,8 +554,8 @@ class QuoteController extends Controller
     public function aiDraft(Request $request)
     {
         $jobDescription = escapeshellarg($request->job_description);
-        $scriptPath = base_path('python-scripts/quote_ai.py');
-        $pythonPath = 'C:\\Users\\patel\\AppData\\Local\\Python\\bin\\python.exe'; // paste YOUR path here
+        $scriptPath = config('latin.scripts_path') . '/quote_ai.py';
+        $pythonPath = config('latin.python_path');
 
         $output = shell_exec("\"$pythonPath\" \"$scriptPath\" $jobDescription");
 
@@ -560,8 +573,8 @@ class QuoteController extends Controller
         ]);
 
         try {   
-            $pythonPath = 'C:\\Users\\patel\\AppData\\Local\\Python\\bin\\python.exe'; // paste YOUR path here
-            $scriptPath = base_path('python-scripts\\pricing_anomaly.py');
+            $pythonPath = config('latin.python_path');
+            $scriptPath = config('latin.scripts_path') . '/pricing_anomaly.py';
 
             $description = escapeshellarg($request->description);
             $quantity = escapeshellarg($request->quantity);

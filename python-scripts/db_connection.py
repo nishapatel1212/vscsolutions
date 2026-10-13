@@ -8,9 +8,15 @@ file. This means there's only ONE place your DB credentials live
 """
 
 import os
+import sys
 import pymysql
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
+
+# Windows consoles default to cp1252, which can't print emoji in our log messages.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
 
 # Path to your Laravel project's .env file.
 # Your scripts live in: D:\Wamp\www\latin_electrical\python-scripts

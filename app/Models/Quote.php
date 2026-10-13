@@ -9,6 +9,7 @@ class Quote extends Model
     protected $fillable = [
         'quote_number',
         'quote_date',
+        'customer_id',
         'customer_name',
         'customer_email',
         'customer_phone',
@@ -31,6 +32,11 @@ class Quote extends Model
     public function items()
     {
         return $this->hasMany(QuoteItem::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function invoiceCopy()

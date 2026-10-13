@@ -11,12 +11,12 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::withCount('quotes')->latest('id')->get();
-        return view('customers.index', compact('customers'));
+        return view('admin_panel.customers.index', compact('customers'));
     }
 
     public function create()
     {
-        return view('customers.create');
+        return view('admin_panel.customers.create');
     }
 
     public function store(Request $request)
@@ -37,7 +37,7 @@ class CustomerController extends Controller
     public function edit($id)
     {
         $data = Customer::findOrFail($id);
-        return view('customers.edit', compact('data'));
+        return view('admin_panel.customers.edit', compact('data'));
     }
 
     public function update(Request $request, $id)
@@ -59,7 +59,7 @@ class CustomerController extends Controller
     public function show($id)
     {
         $customer = Customer::with('quotes')->findOrFail($id);
-        return view('customers.show', compact('customer'));
+        return view('admin_panel.customers.show', compact('customer'));
     }
 
     public function destroy($id)

@@ -47,7 +47,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($customers as $customer)
+                @foreach($customers as $customer)
                     <tr>
                         <td><span class="quote-number">{{ $customer->name }}</span></td>
                         <td>{{ $customer->phone ?? '—' }}</td>
@@ -62,16 +62,7 @@
                             </a>
                         </td>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="5">
-                            <div class="empty-state">
-                                <i class="fas fa-users"></i>
-                                No customers yet — add your first one to get started.
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -92,7 +83,11 @@ $(document).ready(function () {
         order: [[0, 'asc']],
         pageLength: 25,
         responsive: true,
-        language: { search: "", searchPlaceholder: "Search customers..." }
+        language: {
+            search: "",
+            searchPlaceholder: "Search customers...",
+            emptyTable: "No customers yet — add your first one to get started."
+        }
     });
 });
 </script>

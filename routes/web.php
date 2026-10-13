@@ -3,9 +3,11 @@
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\SafetyCheckReportController;
+use App\Http\Controllers\ServiceJobController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -76,6 +78,23 @@ Route::prefix('customer')->group(function () {
     Route::put('/{id}', [CustomerController::class, 'update'])->name('customer.update');
     Route::get('/{id}', [CustomerController::class, 'show'])->name('customer.show');
     Route::delete('/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
+});
+
+Route::prefix('jobs')->group(function () {
+    Route::get('/', [ServiceJobController::class, 'index'])->name('jobs.index');
+    Route::get('/create', [ServiceJobController::class, 'create'])->name('jobs.create');
+    Route::post('/store', [ServiceJobController::class, 'store'])->name('jobs.store');
+    Route::get('/{id}/edit', [ServiceJobController::class, 'edit'])->name('jobs.edit');
+    Route::put('/{id}', [ServiceJobController::class, 'update'])->name('jobs.update');
+    Route::delete('/{id}', [ServiceJobController::class, 'destroy'])->name('jobs.destroy');
+});
+
+Route::prefix('leads')->group(function () {
+    Route::get('/', [LeadController::class, 'index'])->name('leads.index');
+    Route::get('/{id}', [LeadController::class, 'show'])->name('leads.show');
+    Route::post('/{id}/status', [LeadController::class, 'updateStatus'])->name('leads.updateStatus');
+    Route::post('/{id}/convert', [LeadController::class, 'convert'])->name('leads.convert');
+    Route::delete('/{id}', [LeadController::class, 'destroy'])->name('leads.destroy');
 });
 
 // chat page
