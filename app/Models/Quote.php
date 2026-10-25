@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class Quote extends Model
 {
+    use Auditable;
+
     protected $fillable = [
         'quote_number',
         'quote_date',

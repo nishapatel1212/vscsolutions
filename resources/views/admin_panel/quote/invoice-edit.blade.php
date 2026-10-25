@@ -19,127 +19,6 @@
 </div>
 @endsection
 
-@push('styles')
-<style>
-    .quote-container {
-        background: #ffffff;
-        padding: 50px;
-        width: 100%;
-        margin: 0 auto;
-        border: 1px solid #e6e8ef;
-    }
-
-    .company-logo {
-        width: 56px;
-        height: 56px;
-        object-fit: contain;
-    }
-
-    .company-name {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--latin-navy-deep);
-    }
-
-    .company-details {
-        color: #4b5160;
-        line-height: 1.6;
-        font-size: 13px;
-    }
-
-    .quote-divider {
-        border: 0;
-        border-top: 1px solid #e6e8ef;
-        margin: 28px 0;
-    }
-
-    .section-label {
-        color: #6b7280;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-    }
-
-    .doc-input {
-        border: 1px solid transparent;
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 14px;
-        width: 100%;
-        background: transparent;
-        transition: all 0.15s ease;
-    }
-
-    .doc-input:hover,
-    .doc-input:focus {
-        border-color: var(--border-soft);
-        background: var(--page-bg);
-        outline: none;
-    }
-
-    .doc-input.bold {
-        font-weight: 700;
-        color: var(--latin-navy-deep);
-    }
-
-    .items-table th {
-        color: #6b7280;
-        border: none;
-        border-bottom: 2px solid var(--latin-navy-deep);
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 10px 8px;
-    }
-
-    .items-table td {
-        padding: 8px;
-        border-color: #eef0f5;
-        vertical-align: top;
-    }
-
-    .item-total-display {
-        font-weight: 700;
-        color: var(--latin-navy-deep);
-        padding: 4px 8px;
-    }
-
-    .remove-item-btn {
-        width: 30px;
-        height: 30px;
-        border-radius: 6px;
-        border: 1px solid var(--border-soft);
-        background: #fff;
-        color: var(--danger);
-    }
-
-    .add-item-btn {
-        background: var(--latin-tint);
-        color: var(--latin-navy);
-        border: none;
-        border-radius: 7px;
-        font-weight: 600;
-        font-size: 13px;
-        padding: 8px 14px;
-    }
-
-    .totals-table td {
-        border: none;
-        padding: 6px 8px;
-        font-size: 14px;
-    }
-
-    .grand-total-input {
-        font-size: 18px;
-        font-weight: 800;
-        color: var(--latin-navy-deep);
-        text-align: right;
-    }
-</style>
-@endpush
-
 @section('content')
 
 @if($errors->any())
@@ -156,7 +35,7 @@
     @csrf
     @method('PUT')
 
-    <div class="quote-container">
+    <div class="quote-container invoice-doc">
 
         {{-- HEADER --}}
         <div class="row align-items-center">
@@ -270,51 +149,5 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script>
-$(document).ready(function () {
-
-    function recalc() {
-        let subtotal = 0;
-
-        $('.item-row').each(function () {
-            let qty = parseFloat($(this).find('.quantity').val()) || 0;
-            let amt = parseFloat($(this).find('.amount').val()) || 0;
-            let total = qty * amt;
-
-            $(this).find('.item-total-display').text('$' + total.toFixed(2));
-            subtotal += total;
-        });
-
-        $('#subtotalDisplay').text('$' + subtotal.toFixed(2));
-        $('#grandTotalDisplay').text('$' + subtotal.toFixed(2));
-    }
-
-    $('#addItem').on('click', function () {
-        let row = `
-            <tr class="item-row">
-                <td><textarea name="description[]" class="doc-input" rows="2" required></textarea></td>
-                <td><input type="number" name="quantity[]" class="doc-input quantity text-center" value="1" min="1" required></td>
-                <td><input type="number" name="amount[]" class="doc-input amount text-end" value="0" step="0.01" min="0" required></td>
-                <td><div class="item-total-display text-end">$0.00</div></td>
-                <td class="text-center"><button type="button" class="remove-item-btn remove-item"><i class="fas fa-trash"></i></button></td>
-            </tr>`;
-        $('#itemsBody').append(row);
-        recalc();
-    });
-
-    $(document).on('click', '.remove-item', function () {
-        if ($('.item-row').length > 1) {
-            $(this).closest('.item-row').remove();
-            recalc();
-        } else {
-            alert('At least one item is required.');
-        }
-    });
-
-    $(document).on('input', '.quantity, .amount', recalc);
-
-    recalc();
-});
-</script>
+<script src="{{ asset('js/pages/invoice-edit.js') }}"></script>
 @endpush

@@ -15,54 +15,6 @@
 </div>
 @endsection
 
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-
-<style>
-    .reports-table td.actions-cell {
-        white-space: nowrap;
-    }
-
-    .reports-table td.actions-cell .btn-icon {
-        margin-right: 4px;
-    }
-
-    /* Responsive extension's expand control, tinted to match brand */
-    table.dtr-inline.collapsed > tbody > tr > td.dtr-control::before,
-    table.dtr-inline.collapsed > tbody > tr > th.dtr-control::before {
-        background-color: var(--latin-navy);
-        border: 2px solid #fff;
-        box-shadow: 0 0 3px rgba(0,0,0,0.2);
-    }
-
-    .dtr-details {
-        list-style: none;
-        padding: 0;
-        margin: 8px 0 0;
-    }
-
-    .dtr-details li {
-        padding: 6px 0;
-        border-bottom: 1px solid var(--border-soft);
-        font-size: 13px;
-    }
-
-    .dtr-details .dtr-title {
-        font-weight: 700;
-        color: var(--latin-navy-deep);
-        display: inline-block;
-        min-width: 110px;
-    }
-
-    @media (max-width: 575px) {
-        .page-title {
-            font-size: 22px;
-        }
-    }
-</style>
-@endpush
-
 @section('content')
 
 @if(session('success'))
@@ -86,7 +38,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table data-table reports-table w-100" id="reportsTable">
+        <table class="table data-table reports-table w-100" id="reportsTable" data-ajax-url="{{ route('safetycheckreport.index') }}">
             <thead>
                 <tr>
                     <th>Actions</th>
@@ -104,51 +56,5 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function () {
-    $('#reportsTable').DataTable({
-        processing: true,
-        serverSide: true,
-        responsive: true,
-        pageLength: 10,
-        ajax: "{{ route('safetycheckreport.index') }}",
-
-        columns: [
-            {
-                data: 'actions',
-                name: 'actions',
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: 'client_name',
-                name: 'client_name'
-            },
-            {
-                data: 'address',
-                name: 'address'
-            },
-            {
-                data: 'report_date',
-                name: 'report_date'
-            },
-            {
-                data: 'created_at',
-                name: 'created_at'
-            },
-        ],
-
-        language: {
-            search: "",
-            searchPlaceholder: "Search reports...",
-        }
-    });
-});
-</script>
+<script src="{{ asset('js/pages/safety-check-index.js') }}"></script>
 @endpush

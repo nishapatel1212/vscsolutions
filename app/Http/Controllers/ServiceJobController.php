@@ -80,4 +80,35 @@ class ServiceJobController extends Controller
 
         return redirect()->route('jobs.index')->with('success', 'Job deleted.');
     }
+
+    public function calendar()
+    {
+        return view('admin_panel.jobs.calendar');
+    }
+
+    public function calendarEvents(Request $request)
+    {
+        $jobs = ServiceJob::with('customer')
+            ->whereBetween('scheduled_date', [$request->query('start'), $request->query('end')])
+            ->get();
+
+        $colors = [
+            'scheduled' => '#2563eb',
+            'in_progress' => '#b45309',
+            'completed' => '#1a7f45',
+            'cancelled' => '#c0392b',
+        ];
+
+        $events = $jobs->map(function ($job) use ($colors) {
+            return [
+                'id' => $job->id,
+                'title' => $job->title . ($job->customer ? ' — ' . $job->customer->name : ''),
+                'start' => $job->scheduled_date->format('Y-m-d'),
+                'color' => $colors[$job->status] ?? '#6b7280',
+                'url' => route('jobs.edit', $job->id),
+            ];
+        });
+
+        return response()->json($events);
+    }
 }

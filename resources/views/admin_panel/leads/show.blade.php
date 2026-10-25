@@ -11,17 +11,6 @@
 </div>
 @endsection
 
-@push('styles')
-<style>
-    .form-label {
-        font-weight: 600;
-        font-size: 13.5px;
-        color: var(--latin-navy-deep);
-        margin-bottom: 6px;
-    }
-</style>
-@endpush
-
 @section('content')
 
 @if(session('success'))

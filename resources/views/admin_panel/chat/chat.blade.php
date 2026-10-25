@@ -1,48 +1,28 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('title', 'Create Safety Report')
+@section('title', 'AI Chatbot')
 
 @section('content_header')
-<h1>AI Chatbot</h1>
+<div>
+    <h1 class="page-title">AI Chatbot</h1>
+</div>
 @endsection
 
 @section('content')
 
-<div id="chat-box" style="border:1px solid #ccc; height:300px; overflow:auto; padding:10px;"></div>
+<div class="panel">
+    <div class="p-4">
+        <div id="chat-box" style="border:1px solid #ccc; height:300px; overflow:auto; padding:10px;"></div>
 
-<input type="text" id="message" placeholder="Type your issue..." style="width:80%;">
-<button onclick="sendMessage()">Send</button>
+        <form id="chatForm" data-chat-url="{{ route('chatbot.talk') }}" class="d-flex gap-2 mt-3" onsubmit="sendMessage(); return false;">
+            <input type="text" id="message" class="form-control" placeholder="Type your issue...">
+            <button type="submit" class="btn btn-gold">Send</button>
+        </form>
+    </div>
+</div>
 
 @endsection
 
-@section('js')
-<script>
-function sendMessage() {
-    let message = $('#message').val();
-
-    // Show user message
-    $('#chat-box').append("<p><b>You:</b> " + message + "</p>");
-
-    $.ajax({
-        url: "{{route('chatbot.talk')}}",
-        method: 'POST',
-        contentType: 'application/json',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: JSON.stringify({ message: message }),
-
-        success: function(data) {
-            $('#chat-box').append("<p><b>Bot:</b> " + data.reply + "</p>");
-        },
-
-        error: function(xhr) {
-            $('#chat-box').append("<p style='color:red;'><b>Error:</b> Something went wrong</p>");
-        }
-    });
-
-    // Clear input
-    $('#message').val('');
-}
-</script>
-@endsection
+@push('scripts')
+<script src="{{ asset('js/pages/chat.js') }}"></script>
+@endpush

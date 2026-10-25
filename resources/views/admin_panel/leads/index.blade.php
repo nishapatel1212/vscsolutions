@@ -9,27 +9,6 @@
 </div>
 @endsection
 
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-<style>
-    .status-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-    .status-new { background: #e7f1ff; color: #2563eb; }
-    .status-contacted { background: #fff4e5; color: #b45309; }
-    .status-quoted { background: #f3e8ff; color: #7c3aed; }
-    .status-converted { background: #e8f8ee; color: #1a7f45; }
-    .status-lost { background: #fde8e8; color: #c0392b; }
-</style>
-@endpush
-
 @section('content')
 
 @if(session('success'))
@@ -92,22 +71,14 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function () {
-    $('#leadsTable').DataTable({
+    initDataTable('#leadsTable', {
         order: [[0, 'desc']],
-        pageLength: 25,
-        responsive: true,
         language: {
-            search: "",
-            searchPlaceholder: "Search leads...",
-            emptyTable: "No leads yet."
+            search: '',
+            searchPlaceholder: 'Search leads...',
+            emptyTable: 'No leads yet.'
         }
     });
 });

@@ -16,11 +16,6 @@
 </div>
 @endsection
 
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-@endpush
-
 @section('content')
 
 @if(session('success'))
@@ -71,22 +66,14 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function () {
-    $('#customersTable').DataTable({
+    initDataTable('#customersTable', {
         order: [[0, 'asc']],
-        pageLength: 25,
-        responsive: true,
         language: {
-            search: "",
-            searchPlaceholder: "Search customers...",
-            emptyTable: "No customers yet — add your first one to get started."
+            search: '',
+            searchPlaceholder: 'Search customers...',
+            emptyTable: 'No customers yet — add your first one to get started.'
         }
     });
 });

@@ -2,10 +2,6 @@
 
 @section('title', 'Quotes')
 
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-@endpush
-
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
     <div>
@@ -128,18 +124,13 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function () {
-    $('#quoteTable').DataTable({
-        order: [[0, "desc"]],
-        pageLength: 25,
+    initDataTable('#quoteTable', {
+        order: [[0, 'desc']],
         language: {
-            search: "",
-            searchPlaceholder: "Search quotes...",
+            search: '',
+            searchPlaceholder: 'Search quotes...'
         }
     });
 });

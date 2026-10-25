@@ -9,32 +9,18 @@
         <p class="page-subtitle">Upcoming and past work</p>
     </div>
 
-    <a href="{{ route('jobs.create') }}" class="btn btn-gold">
-        <i class="fas fa-plus"></i>
-        Schedule Job
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('jobs.calendar') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-calendar-alt"></i>
+            Calendar View
+        </a>
+        <a href="{{ route('jobs.create') }}" class="btn btn-gold">
+            <i class="fas fa-plus"></i>
+            Schedule Job
+        </a>
+    </div>
 </div>
 @endsection
-
-@push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
-<style>
-    .status-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-    .status-scheduled { background: #e7f1ff; color: #2563eb; }
-    .status-in_progress { background: #fff4e5; color: #b45309; }
-    .status-completed { background: #e8f8ee; color: #1a7f45; }
-    .status-cancelled { background: #fde8e8; color: #c0392b; }
-</style>
-@endpush
 
 @section('content')
 
@@ -94,7 +80,7 @@
                             <a href="{{ route('jobs.edit', $job->id) }}" class="btn-icon btn-icon-edit" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this job?');">
+                            <form action="{{ route('jobs.destroy', $job->id) }}" method="POST" class="d-inline" data-confirm="Delete this job?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-icon" title="Delete" style="border:none;background:none;color:var(--danger);">
@@ -112,22 +98,14 @@
 @endsection
 
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function () {
-    $('#jobsTable').DataTable({
+    initDataTable('#jobsTable', {
         order: [[0, 'asc']],
-        pageLength: 25,
-        responsive: true,
         language: {
-            search: "",
-            searchPlaceholder: "Search jobs...",
-            emptyTable: "No jobs scheduled yet."
+            search: '',
+            searchPlaceholder: 'Search jobs...',
+            emptyTable: 'No jobs scheduled yet.'
         }
     });
 });

@@ -3,10 +3,13 @@
 // app/Models/Invoice.php
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
+    use Auditable;
+
     protected $fillable = [
         'quote_id',
         'invoice_number',
