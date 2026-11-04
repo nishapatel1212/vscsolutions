@@ -3,8 +3,8 @@
 @section('title', 'Leads')
 
 @section('content_header')
-<div>
-    <h1 class="page-title">Leads</h1>
+<div class="mb-4">
+    <h1 class="page-title page-title-sm">Leads</h1>
     <p class="page-subtitle">Inquiries from the website and other sources</p>
 </div>
 @endsection
@@ -19,9 +19,7 @@
 @endif
 
 <div class="panel">
-    <div class="panel-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h5><i class="fas fa-inbox me-2"></i> All Leads</h5>
-
+    <div class="panel-header d-flex justify-content-end align-items-center flex-wrap gap-2">
         <div class="btn-group">
             <a href="{{ route('leads.index') }}" class="btn btn-sm {{ !request('status') ? 'btn-gold' : 'btn-outline-secondary' }}">All</a>
             <a href="{{ route('leads.index', ['status' => 'new']) }}" class="btn btn-sm {{ request('status') == 'new' ? 'btn-gold' : 'btn-outline-secondary' }}">New</a>
@@ -33,7 +31,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table data-table w-100" id="leadsTable">
+        <table class="table data-table data-table-striped w-100" id="leadsTable">
             <thead>
                 <tr>
                     <th>Received</th>

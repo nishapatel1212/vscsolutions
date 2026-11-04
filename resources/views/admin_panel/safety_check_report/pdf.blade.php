@@ -184,22 +184,11 @@
 <div class="page">
     <div class="cover">
         <div class="cover-header">
-            {{-- @if(env('CLIENT_NAME') == 'vsc')
-                <img class="cover-logo" src="{{ public_path('images/logo/vsc_logo.png') }}" alt="Logo">
-            @else
-                <img class="cover-logo" src="{{ public_path('images/logo/latin_logo.png') }}" alt="Latin Electrical Logo">
-            @endif   --}}
         </div>
-
-  
 
         <div class="cover-body" style="text-align: center; width: 100%;">
             <div class="cover-brand">
-                @if(env('CLIENT_NAME') == 'vsc')
-                    <img src="{{ public_path('images/logo/vaishu_logo.png') }}" alt="Logo" style="height:200px;width:500px;">
-                @else
-                    <img src="{{ public_path('images/logo/latin_logo.jpeg') }}" alt="Latin Electrical Logo" style="height:200px;width:500px;">
-                @endif 
+                <img src="{{ public_path(company('logo_path')) }}" alt="{{ company('company_name') }} Logo" style="height:200px;width:500px;">
             </div>
             <div class="cover-title" style="text-align:center;">Safety and Compliance Report</div>
             <div class="cover-subtitle" style="text-align:center;">Electrical Check Safety Check Report</div>
@@ -254,11 +243,11 @@
             <table>
                 <tr>
                     <td class="label">Email:</td>
-                    <td>{{ config(env('CLIENT_NAME') . '.email') }}</td>
+                    <td>{{ company('email') }}</td>
                 </tr>
                 <tr>
                     <td class="label">Phone:</td>
-                    <td>{{ config(env('CLIENT_NAME') . '.phone') }}</td>
+                    <td>{{ company('phone') }}</td>
                 </tr>
             </table>
         </div>
@@ -557,11 +546,11 @@
             <table>
                 <tr>
                     <td class="label">Electrical Safety check completed by:</td>
-                    <td class="value">{{ config(env('CLIENT_NAME') . '.electrician_name') }}</td>
+                    <td class="value">{{ company('electrician_name') }}</td>
                 </tr>
                 <tr>
                     <td class="label">Licence/registration number:</td>
-                    <td class="value">{{ config(env('CLIENT_NAME') . '.licence_number')     }}</td>
+                    <td class="value">{{ company('rec_number') }}</td>
                 </tr>
                 <tr>
                     <td class="label">Inspection date:</td>

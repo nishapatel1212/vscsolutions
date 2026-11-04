@@ -2,15 +2,22 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\CompanyProfileController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\JobTypeKeywordController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\QuotePriceItemController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SafetyCheckReportController;
 use App\Http\Controllers\ServiceJobController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -82,10 +89,21 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
     });
 
+    Route::prefix('certificates')->middleware('permission:manage-certificates')->group(function () {
+        Route::get('/', [CertificateController::class, 'index'])->name('certificates.index');
+        Route::get('/create', [CertificateController::class, 'create'])->name('certificates.create');
+        Route::post('/store', [CertificateController::class, 'store'])->name('certificates.store');
+        Route::get('/{id}/edit', [CertificateController::class, 'edit'])->name('certificates.edit');
+        Route::put('/{id}', [CertificateController::class, 'update'])->name('certificates.update');
+        Route::delete('/{id}', [CertificateController::class, 'destroy'])->name('certificates.destroy');
+        Route::get('/{id}/pdf', [CertificateController::class, 'downloadPdf'])->name('certificates.pdf');
+    });
+
     Route::prefix('jobs')->middleware('permission:manage-jobs')->group(function () {
         Route::get('/', [ServiceJobController::class, 'index'])->name('jobs.index');
         Route::get('/calendar', [ServiceJobController::class, 'calendar'])->name('jobs.calendar');
         Route::get('/calendar-events', [ServiceJobController::class, 'calendarEvents'])->name('jobs.calendarEvents');
+        Route::patch('/{id}/reschedule', [ServiceJobController::class, 'reschedule'])->name('jobs.reschedule');
         Route::get('/create', [ServiceJobController::class, 'create'])->name('jobs.create');
         Route::post('/store', [ServiceJobController::class, 'store'])->name('jobs.store');
         Route::get('/{id}/edit', [ServiceJobController::class, 'edit'])->name('jobs.edit');
@@ -127,6 +145,47 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit');
         Route::put('/{id}', [RoleController::class, 'update'])->name('roles.update');
         Route::delete('/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
+
+    Route::prefix('email-templates')->middleware('permission:manage-email-templates')->group(function () {
+        Route::get('/', [EmailTemplateController::class, 'index'])->name('email-templates.index');
+        Route::get('/create', [EmailTemplateController::class, 'create'])->name('email-templates.create');
+        Route::post('/store', [EmailTemplateController::class, 'store'])->name('email-templates.store');
+        Route::get('/{id}/edit', [EmailTemplateController::class, 'edit'])->name('email-templates.edit');
+        Route::put('/{id}', [EmailTemplateController::class, 'update'])->name('email-templates.update');
+        Route::delete('/{id}', [EmailTemplateController::class, 'destroy'])->name('email-templates.destroy');
+        Route::get('/{id}/send', [EmailTemplateController::class, 'showSend'])->name('email-templates.showSend');
+        Route::post('/{id}/send', [EmailTemplateController::class, 'send'])->name('email-templates.send');
+        Route::get('/{id}/log', [EmailTemplateController::class, 'sendLog'])->name('email-templates.log');
+    });
+
+    Route::prefix('sms-templates')->middleware('permission:manage-sms-templates')->group(function () {
+        Route::get('/', [SmsTemplateController::class, 'index'])->name('sms-templates.index');
+        Route::get('/create', [SmsTemplateController::class, 'create'])->name('sms-templates.create');
+        Route::post('/store', [SmsTemplateController::class, 'store'])->name('sms-templates.store');
+        Route::get('/{id}/edit', [SmsTemplateController::class, 'edit'])->name('sms-templates.edit');
+        Route::put('/{id}', [SmsTemplateController::class, 'update'])->name('sms-templates.update');
+        Route::delete('/{id}', [SmsTemplateController::class, 'destroy'])->name('sms-templates.destroy');
+        Route::get('/{id}/send', [SmsTemplateController::class, 'showSend'])->name('sms-templates.showSend');
+        Route::post('/{id}/send', [SmsTemplateController::class, 'send'])->name('sms-templates.send');
+        Route::get('/{id}/log', [SmsTemplateController::class, 'sendLog'])->name('sms-templates.log');
+    });
+
+    Route::prefix('settings')->middleware('permission:manage-settings')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('settings.index');
+
+        Route::get('/company-profile', [CompanyProfileController::class, 'edit'])->name('settings.company-profile.edit');
+        Route::put('/company-profile', [CompanyProfileController::class, 'update'])->name('settings.company-profile.update');
+
+        Route::get('/job-keywords', [JobTypeKeywordController::class, 'index'])->name('settings.job-keywords.index');
+        Route::post('/job-keywords', [JobTypeKeywordController::class, 'store'])->name('settings.job-keywords.store');
+        Route::put('/job-keywords/{id}', [JobTypeKeywordController::class, 'update'])->name('settings.job-keywords.update');
+        Route::delete('/job-keywords/{id}', [JobTypeKeywordController::class, 'destroy'])->name('settings.job-keywords.destroy');
+
+        Route::get('/price-list', [QuotePriceItemController::class, 'index'])->name('settings.price-list.index');
+        Route::post('/price-list', [QuotePriceItemController::class, 'store'])->name('settings.price-list.store');
+        Route::put('/price-list/{id}', [QuotePriceItemController::class, 'update'])->name('settings.price-list.update');
+        Route::delete('/price-list/{id}', [QuotePriceItemController::class, 'destroy'])->name('settings.price-list.destroy');
     });
 
     Route::prefix('permissions')->middleware('permission:manage-roles')->group(function () {

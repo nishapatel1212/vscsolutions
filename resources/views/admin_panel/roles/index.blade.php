@@ -3,9 +3,9 @@
 @section('title', 'Roles')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Roles</h1>
+        <h1 class="page-title page-title-sm">Roles</h1>
         <p class="page-subtitle">Manage roles and their permissions</p>
     </div>
 
@@ -33,12 +33,8 @@
 @endif
 
 <div class="panel">
-    <div class="panel-header">
-        <h5><i class="fas fa-user-shield me-2"></i> All Roles</h5>
-    </div>
-
     <div class="table-responsive">
-        <table class="table w-100">
+        <table class="table data-table data-table-striped w-100">
             <thead>
                 <tr>
                     <th>Role</th>

@@ -20,10 +20,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage-quotes',
             'manage-jobs',
             'manage-safety-checks',
+            'manage-certificates',
             'use-chatbot',
             'view-audit-logs',
             'manage-users',
             'manage-roles',
+            'manage-email-templates',
+            'manage-sms-templates',
+            'manage-settings',
         ];
 
         foreach ($permissions as $permission) {
@@ -39,6 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage-quotes',
             'manage-jobs',
             'manage-safety-checks',
+            'manage-certificates',
             'use-chatbot',
         ]);
     }

@@ -48,4 +48,9 @@ class SafetyCheckReport extends Model
     {
         return $this->hasMany(ReportImage::class, 'report_id');
     }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }

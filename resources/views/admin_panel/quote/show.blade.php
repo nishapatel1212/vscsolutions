@@ -39,21 +39,20 @@
 
             <div class="col-md-6">
                 <div class="d-flex align-items-center">
-                    <img src="{{ asset('images/logo/latin_logo_dark.png') }}" alt="Latin Electrical Logo" class="company-logo me-3">
+                    <img src="{{ asset(company('logo_dark_path')) }}" alt="{{ company('company_name') }} Logo" class="company-logo me-3">
 
                     {{-- <div class="quote-title">QUOTE</div> --}}
                 </div>
             </div>
 
             <div class="col-md-6 text-md-end">
-                <div class="company-name">Latin Electrical</div>
+                <div class="company-name">{{ company('company_name') }}</div>
 
                 <div class="company-details">
-                    {{-- 17 Daisy Street<br> --}}
-                    Officer, VIC 3809<br>
-                    info@latinelectrical.com.au<br>
-                    ABN 84 786 819 42<br>
-                    <span class="rec-number">REC: 37241</span>
+                    {{ company('address') }}<br>
+                    {{ company('email') }}<br>
+                    ABN {{ company('abn') }}<br>
+                    <span class="rec-number">REC: {{ company('rec_number') }}</span>
                 </div>
             </div>
 
@@ -155,14 +154,14 @@
                     </div>
 
                     <div class="info-block-body">
-                        <strong>Commonwealth Bank</strong><br>
-                        Name: Jasmeen Patel<br>
-                        BSB: 063619<br>
-                        Account: 11406566
+                        <strong>{{ company('bank_name') }}</strong><br>
+                        Name: {{ company('bank_account_name') }}<br>
+                        BSB: {{ company('bank_bsb') }}<br>
+                        Account: {{ company('bank_account_number') }}
                     </div>
 
                     <div class="payment-reference">
-                        Use quote number as a reference.
+                        {{ company('payment_reference_note') }}
                     </div>
                 </div>
             </div>
@@ -186,7 +185,7 @@
             Thank you for your business!
 
             <div class="quote-footer-small">
-                Latin Electrical &nbsp;|&nbsp; REC: 37241 &nbsp;|&nbsp; info@latinelectrical.com.au
+                {{ company('company_name') }} &nbsp;|&nbsp; REC: {{ company('rec_number') }} &nbsp;|&nbsp; {{ company('email') }}
             </div>
         </div>
 

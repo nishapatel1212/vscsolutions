@@ -3,9 +3,9 @@
 @section('title', 'Permissions')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Permissions</h1>
+        <h1 class="page-title page-title-sm">Permissions</h1>
         <p class="page-subtitle">Manage individual permissions</p>
     </div>
 
@@ -26,12 +26,8 @@
 @endif
 
 <div class="panel">
-    <div class="panel-header">
-        <h5><i class="fas fa-key me-2"></i> All Permissions</h5>
-    </div>
-
     <div class="table-responsive">
-        <table class="table w-100">
+        <table class="table data-table data-table-striped w-100">
             <thead>
                 <tr>
                     <th>Permission</th>

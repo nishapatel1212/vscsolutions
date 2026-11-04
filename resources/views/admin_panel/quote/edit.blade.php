@@ -294,11 +294,11 @@
                 <div class="col-md-6">
                     <div class="payment-box">
                         <h6 class="fw-bold mb-2">Payment Methods</h6>
-                        <p class="fw-bold">Commonwealth Bank</p>
-                        <p>Name: Jasmeen Patel</p>
-                        <p>BSB: 063619</p>
-                        <p>Account: 11406566</p>
-                        <p class="mt-3 fw-bold">USE QUOTE NUMBER AS A REFERENCE.</p>
+                        <p class="fw-bold">{{ company('bank_name') }}</p>
+                        <p>Name: {{ company('bank_account_name') }}</p>
+                        <p>BSB: {{ company('bank_bsb') }}</p>
+                        <p>Account: {{ company('bank_account_number') }}</p>
+                        <p class="mt-3 fw-bold">{{ company('payment_reference_note') }}</p>
                     </div>
                 </div>
 

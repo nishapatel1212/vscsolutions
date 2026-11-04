@@ -3,9 +3,9 @@
 @section('title', 'Customers')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Customers</h1>
+        <h1 class="page-title page-title-sm">Customers</h1>
         <p class="page-subtitle">All clients you've worked with</p>
     </div>
 
@@ -26,12 +26,8 @@
 @endif
 
 <div class="panel">
-    <div class="panel-header">
-        <h5><i class="fas fa-users me-2"></i> All Customers</h5>
-    </div>
-
     <div class="table-responsive">
-        <table class="table data-table w-100" id="customersTable">
+        <table class="table data-table data-table-striped w-100" id="customersTable">
             <thead>
                 <tr>
                     <th>Name</th>

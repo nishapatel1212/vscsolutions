@@ -3,9 +3,9 @@
 @section('title', 'Quotes')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Quotes</h1>
+        <h1 class="page-title page-title-sm">Quotes</h1>
     </div>
 
     <a href="{{ route('quote.create') }}" class="btn btn-gold btn-sm">
@@ -33,12 +33,8 @@
 
 <div class="panel">
 
-    <div class="panel-header">
-        <h5><i class="fas fa-file-invoice me-2"></i> All Quotes</h5>
-    </div>
-
     <div class="table-responsive">
-        <table class="table data-table mb-0" id="quoteTable">
+        <table class="table data-table data-table-striped mb-0" id="quoteTable">
             <thead>
                 <tr>
                     <th>#</th>

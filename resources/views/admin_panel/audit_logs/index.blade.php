@@ -3,9 +3,9 @@
 @section('title', 'Audit Log')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Audit Log</h1>
+        <h1 class="page-title page-title-sm">Audit Log</h1>
         <p class="page-subtitle">Who changed what, and when</p>
     </div>
 </div>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table w-100">
+        <table class="table data-table data-table-striped w-100">
             <thead>
                 <tr>
                     <th>Date</th>

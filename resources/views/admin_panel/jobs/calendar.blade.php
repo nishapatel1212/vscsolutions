@@ -14,6 +14,10 @@
             <i class="fas fa-list"></i>
             List View
         </a>
+        <a href="{{ route('jobs.create') }}" class="btn btn-danger">
+            <i class="fas fa-bolt"></i>
+            Urgent Callout
+        </a>
         <a href="{{ route('jobs.create') }}" class="btn btn-gold">
             <i class="fas fa-plus"></i>
             Schedule Job
@@ -32,9 +36,13 @@
             <span><span class="dot" style="background:#1a7f45;"></span> Completed</span>
             <span><span class="dot" style="background:#c0392b;"></span> Cancelled</span>
         </div>
+        <small class="text-muted d-block mt-2">Drag a job to reschedule it, resize to adjust duration, or click an empty slot to book a job into that time.</small>
     </div>
     <div class="p-3">
-        <div id="calendar" data-events-url="{{ route('jobs.calendarEvents') }}"></div>
+        <div id="calendar"
+             data-events-url="{{ route('jobs.calendarEvents') }}"
+             data-create-url="{{ route('jobs.create') }}"
+             data-reschedule-url-template="{{ route('jobs.reschedule', ['id' => '__ID__']) }}"></div>
     </div>
 </div>
 

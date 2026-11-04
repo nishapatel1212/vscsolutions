@@ -8,32 +8,34 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
+    /**
+     * Creates the first super-admin account for this deployment from .env
+     * (ADMIN_NAME / ADMIN_EMAIL / ADMIN_PASSWORD) — per-client values, not
+     * hardcoded, so this same seeder works for every client. Additional
+     * staff accounts (e.g. electricians) are added afterward through the
+     * Users page in the UI, not seeded.
+     */
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'Nisha Patel',
-                'email' => 'patelnisha107070@gmail.com',
-                'role' => 'super-admin',
-            ],
-            [
-                'name' => 'Jasmin Patel',
-                'email' => 'pateljasmin268@gmail.com',
-                'role' => 'electrician',
-            ],
-        ];
+        $name = env('ADMIN_NAME');
+        $email = env('ADMIN_EMAIL');
+        $password = env('ADMIN_PASSWORD');
 
-        foreach ($users as $data) {
-            $user = User::firstOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'password' => Hash::make('123456'),
-                    'email_verified_at' => now(),
-                ]
-            );
+        if (!$name || !$email || !$password) {
+            $this->command?->warn('Skipped UserSeeder — set ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD in .env first.');
 
-            $user->syncRoles([$data['role']]);
+            return;
         }
+
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'password' => Hash::make($password),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $user->syncRoles(['super-admin']);
     }
 }

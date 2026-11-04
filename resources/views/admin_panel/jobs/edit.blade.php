@@ -48,6 +48,22 @@
 
             <div class="row g-3 mt-1">
                 <div class="col-md-6">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" name="start_time" class="form-control @error('start_time') is-invalid @enderror"
+                           value="{{ old('start_time', $job->start_time ? substr($job->start_time, 0, 5) : '') }}">
+                    @error('start_time') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">End Time</label>
+                    <input type="time" name="end_time" class="form-control @error('end_time') is-invalid @enderror"
+                           value="{{ old('end_time', $job->end_time ? substr($job->end_time, 0, 5) : '') }}">
+                    @error('end_time') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+            </div>
+
+            <div class="row g-3 mt-1">
+                <div class="col-md-6">
                     <label class="form-label">Customer</label>
                     <select name="customer_id" class="form-control">
                         <option value="">-- None --</option>

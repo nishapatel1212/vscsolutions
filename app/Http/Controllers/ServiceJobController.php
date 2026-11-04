@@ -37,6 +37,8 @@ class ServiceJobController extends Controller
             'quote_id' => 'nullable|exists:quotes,id',
             'title' => 'required|string|max:255',
             'scheduled_date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i|after:start_time',
             'technician' => 'nullable|string|max:255',
             'status' => 'required|in:scheduled,in_progress,completed,cancelled',
             'notes' => 'nullable|string',
@@ -63,6 +65,8 @@ class ServiceJobController extends Controller
             'quote_id' => 'nullable|exists:quotes,id',
             'title' => 'required|string|max:255',
             'scheduled_date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i|after:start_time',
             'technician' => 'nullable|string|max:255',
             'status' => 'required|in:scheduled,in_progress,completed,cancelled',
             'notes' => 'nullable|string',
@@ -100,15 +104,39 @@ class ServiceJobController extends Controller
         ];
 
         $events = $jobs->map(function ($job) use ($colors) {
+            $date = $job->scheduled_date->format('Y-m-d');
+
             return [
                 'id' => $job->id,
-                'title' => $job->title . ($job->customer ? ' — ' . $job->customer->name : ''),
-                'start' => $job->scheduled_date->format('Y-m-d'),
+                'title' => $job->title
+                    . ($job->technician ? ' · ' . $job->technician : '')
+                    . ($job->customer ? ' — ' . $job->customer->name : ''),
+                'start' => $job->start_time ? $date . 'T' . $job->start_time : $date,
+                'end' => $job->end_time ? $date . 'T' . $job->end_time : null,
+                'allDay' => !$job->start_time,
                 'color' => $colors[$job->status] ?? '#6b7280',
                 'url' => route('jobs.edit', $job->id),
+                'extendedProps' => [
+                    'status' => $job->status,
+                    'technician' => $job->technician,
+                ],
             ];
         });
 
         return response()->json($events);
+    }
+
+    public function reschedule(Request $request, $id)
+    {
+        $request->validate([
+            'scheduled_date' => 'required|date',
+            'start_time' => 'nullable|date_format:H:i:s,H:i',
+            'end_time' => 'nullable|date_format:H:i:s,H:i',
+        ]);
+
+        $job = ServiceJob::findOrFail($id);
+        $job->update($request->only('scheduled_date', 'start_time', 'end_time'));
+
+        return response()->json(['success' => true]);
     }
 }

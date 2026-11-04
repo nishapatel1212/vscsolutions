@@ -3,9 +3,9 @@
 @section('title', 'Safety Check Reports')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Safety Check Reports</h1>
+        <h1 class="page-title page-title-sm">Safety Check Reports</h1>
     </div>
 
     <a href="{{ route('safetycheckreport.create') }}" class="btn btn-gold">
@@ -33,12 +33,8 @@
 
 <div class="panel">
 
-    <div class="panel-header">
-        <h5><i class="fas fa-clipboard-check me-2"></i> All Reports</h5>
-    </div>
-
     <div class="table-responsive">
-        <table class="table data-table reports-table w-100" id="reportsTable" data-ajax-url="{{ route('safetycheckreport.index') }}">
+        <table class="table data-table data-table-striped reports-table w-100" id="reportsTable" data-ajax-url="{{ route('safetycheckreport.index') }}">
             <thead>
                 <tr>
                     <th>Actions</th>

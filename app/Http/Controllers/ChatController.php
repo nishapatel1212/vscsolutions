@@ -63,7 +63,7 @@ class ChatController extends Controller
     {
         return response()->json([
             'reply' => "Sorry, I'm unable to respond right now. Please call us on "
-                . config('latin.phone') . ' or email ' . config('latin.email') . '.',
+                . company('phone') . ' or email ' . company('email') . '.',
         ], 200);
     }
 
@@ -79,15 +79,19 @@ class ChatController extends Controller
             ->map(fn($item, $keyword) => "- {$item['description']}: approx \${$item['amount']} AUD")
             ->implode("\n");
 
+        $companyName = company('company_name');
+        $address = company('address');
+        $insuranceLine = company('insurance_line');
+
         return <<<PROMPT
-        You are the customer service assistant for Latin Electrical, a licensed
-        electrical contractor in Officer, Victoria (REC {$this->rec()}).
+        You are the customer service assistant for {$companyName}, a licensed
+        electrical contractor in {$address} (REC {$this->rec()}).
 
         Business facts (use these, don't invent anything else):
         - Service area: {$this->serviceArea()}.
         - Phone: {$this->phones()}
         - Email: {$this->email()}
-        - Insured for \$20M public liability (NECA member).
+        - {$insuranceLine}
 
         Approximate price guide (AUD, GST not included unless stated):
         {$catalog}
@@ -115,21 +119,21 @@ class ChatController extends Controller
 
     private function rec(): string
     {
-        return config('latin.rec_number');
+        return company('rec_number', '');
     }
 
     private function serviceArea(): string
     {
-        return config('latin.service_area');
+        return company('service_area', '');
     }
 
     private function phones(): string
     {
-        return config('latin.phone');
+        return company('phone', '');
     }
 
     private function email(): string
     {
-        return config('latin.email');
+        return company('email', '');
     }
 }

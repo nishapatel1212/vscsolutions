@@ -15,6 +15,8 @@ class ServiceJob extends Model
         'quote_id',
         'title',
         'scheduled_date',
+        'start_time',
+        'end_time',
         'technician',
         'status',
         'notes',

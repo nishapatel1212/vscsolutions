@@ -3,9 +3,9 @@
 @section('title', $customer->name)
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
     <div>
-        <h1 class="page-title">{{ $customer->name }}</h1>
+        <h1 class="page-title page-title-sm">{{ $customer->name }}</h1>
         <p class="page-subtitle">Customer profile</p>
     </div>
 
@@ -47,7 +47,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table data-table mb-0">
+                <table class="table data-table data-table-striped mb-0">
                     <thead>
                         <tr>
                             <th>Quote No.</th>

@@ -68,7 +68,7 @@
                     <i class="fas fa-bolt"></i>
                 </div>
                 <div>
-                    <h3>REC 37241</h3>
+                    <h3>REC {{ company('rec_number') }}</h3>
                     <p>Registered Electrical Contractor</p>
                 </div>
             </div>

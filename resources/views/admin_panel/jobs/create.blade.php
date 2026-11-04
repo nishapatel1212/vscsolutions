@@ -40,8 +40,24 @@
                 <div class="col-md-6">
                     <label class="form-label">Scheduled Date <span class="text-danger">*</span></label>
                     <input type="date" name="scheduled_date" class="form-control @error('scheduled_date') is-invalid @enderror"
-                           value="{{ old('scheduled_date', now()->format('Y-m-d')) }}" required>
+                           value="{{ old('scheduled_date', request('scheduled_date', now()->format('Y-m-d'))) }}" required>
                     @error('scheduled_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+            </div>
+
+            <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                    <label class="form-label">Start Time</label>
+                    <input type="time" name="start_time" class="form-control @error('start_time') is-invalid @enderror"
+                           value="{{ old('start_time', request('start_time')) }}">
+                    @error('start_time') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">End Time</label>
+                    <input type="time" name="end_time" class="form-control @error('end_time') is-invalid @enderror"
+                           value="{{ old('end_time', request('end_time')) }}">
+                    @error('end_time') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
             </div>
 

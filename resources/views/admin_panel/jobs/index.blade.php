@@ -3,9 +3,9 @@
 @section('title', 'Jobs')
 
 @section('content_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
-        <h1 class="page-title">Scheduled Jobs</h1>
+        <h1 class="page-title page-title-sm">Scheduled Jobs</h1>
         <p class="page-subtitle">Upcoming and past work</p>
     </div>
 
@@ -32,9 +32,7 @@
 @endif
 
 <div class="panel">
-    <div class="panel-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h5><i class="fas fa-calendar-check me-2"></i> All Jobs</h5>
-
+    <div class="panel-header d-flex justify-content-end align-items-center flex-wrap gap-2">
         <div class="btn-group">
             <a href="{{ route('jobs.index') }}" class="btn btn-sm {{ !request('status') ? 'btn-gold' : 'btn-outline-secondary' }}">All</a>
             <a href="{{ route('jobs.index', ['status' => 'scheduled']) }}" class="btn btn-sm {{ request('status') == 'scheduled' ? 'btn-gold' : 'btn-outline-secondary' }}">Scheduled</a>
@@ -45,7 +43,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table data-table w-100" id="jobsTable">
+        <table class="table data-table data-table-striped w-100" id="jobsTable">
             <thead>
                 <tr>
                     <th>Date</th>

@@ -41,17 +41,17 @@
         <div class="row align-items-center">
             <div class="col-md-6">
                 <div class="d-flex align-items-center">
-                    <img src="{{ asset('images/logo/latin_logo_dark.png') }}" alt="Latin Electrical" class="company-logo me-3">
+                    <img src="{{ asset(company('logo_dark_path')) }}" alt="{{ company('company_name') }}" class="company-logo me-3">
                 </div>
             </div>
 
             <div class="col-md-6 text-md-end">
-                <div class="company-name">Latin Electrical</div>
+                <div class="company-name">{{ company('company_name') }}</div>
                 <div class="company-details">
-                    Officer, VIC 3809<br>
-                    info@latinelectrical.com.au<br>
-                    ABN 84 786 819 42<br>
-                    REC: 37241
+                    {{ company('address') }}<br>
+                    {{ company('email') }}<br>
+                    ABN {{ company('abn') }}<br>
+                    REC: {{ company('rec_number') }}
                 </div>
             </div>
         </div>

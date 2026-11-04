@@ -23,6 +23,11 @@ class AuditLogController extends Controller
             'ServiceJob' => 'Service Job',
             'Lead' => 'Lead',
             'SafetyCheckReport' => 'Safety Check Report',
+            'EmailTemplate' => 'Email Template',
+            'SmsTemplate' => 'SMS Template',
+            'JobTypeKeyword' => 'Job Type Keyword',
+            'QuotePriceItem' => 'Quote Price Item',
+            'CompanySetting' => 'Company Settings',
         ];
 
         return view('admin_panel.audit_logs.index', compact('logs', 'models'));

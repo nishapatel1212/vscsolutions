@@ -11,7 +11,7 @@
         </button>
 
         <div class="page-brand">
-            Latin Electrical
+            {{ company('company_name') }}
         </div>
 
     </div>

@@ -2,8 +2,8 @@
 
     <div class="sidebar-logo">
         <a href="{{ url('dashboard') }}">
-            <img src="{{ asset('images/logo/latin_logo.png') }}"
-                 alt="Latin Electrical">
+            <img src="{{ asset(company('logo_path')) }}"
+                 alt="{{ company('company_name') }}">
         </a>
     </div>
 
@@ -22,6 +22,14 @@
            class="sidebar-item {{ request()->is('safetycheck/*') ? 'active' : '' }}">
             <i class="fas fa-file-signature"></i>
             <span>Safety Check</span>
+        </a>
+        @endcan
+
+        @can('manage-certificates')
+        <a href="{{ url('certificates') }}"
+           class="sidebar-item {{ request()->is('certificates*') ? 'active' : '' }}">
+            <i class="fas fa-certificate"></i>
+            <span>Certificates</span>
         </a>
         @endcan
 
@@ -61,6 +69,20 @@
         </a>
         @endcan
 
+        @can('manage-email-templates')
+        <a href="{{ url('email-templates') }}" class="sidebar-item {{ request()->is('email-templates*') ? 'active' : '' }}">
+            <i class="fas fa-envelope-open-text"></i>
+            <span>Email Templates</span>
+        </a>
+        @endcan
+
+        @can('manage-sms-templates')
+        <a href="{{ url('sms-templates') }}" class="sidebar-item {{ request()->is('sms-templates*') ? 'active' : '' }}">
+            <i class="fas fa-comment-sms"></i>
+            <span>SMS Templates</span>
+        </a>
+        @endcan
+
         @can('view-audit-logs')
         <a href="{{ url('audit-logs') }}" class="sidebar-item {{ request()->is('audit-logs*') ? 'active' : '' }}">
             <i class="fas fa-history"></i>
@@ -88,6 +110,13 @@
         <a href="{{ url('permissions') }}" class="sidebar-item {{ request()->is('permissions*') ? 'active' : '' }}">
             <i class="fas fa-key"></i>
             <span>Permissions</span>
+        </a>
+        @endcan
+
+        @can('manage-settings')
+        <a href="{{ url('settings') }}" class="sidebar-item {{ request()->is('settings*') ? 'active' : '' }}">
+            <i class="fas fa-sliders"></i>
+            <span>Settings</span>
         </a>
         @endcan
 

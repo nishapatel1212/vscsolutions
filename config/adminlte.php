@@ -64,12 +64,13 @@ return [
     |
     */
 
+    // Unused: no view in this app extends adminlte::page anymore (see project-overview.md).
     'logo' => '&nbsp;',
-    'logo_img' => 'images/logo/latin_logo.png',
+    'logo_img' => 'images/logo/logo.png',
     'logo_img_class' => 'brand-image',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Latin Electrical',
+    'logo_img_alt' => 'Company Logo',
 
     /*
     |--------------------------------------------------------------------------
