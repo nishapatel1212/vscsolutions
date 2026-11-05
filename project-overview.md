@@ -24,7 +24,7 @@ Two seeded roles (`database/seeders/RolesAndPermissionsSeeder.php`, `UserSeeder.
 
 Permissions are enforced via route middleware (`permission:...`) in `routes/web.php` and gate sidebar links via `@can` directives in `resources/views/partials/sidebar.blade.php`.
 
-`UserSeeder` seeds exactly one account per deployment — the super-admin — from `ADMIN_NAME`/`ADMIN_EMAIL`/`ADMIN_PASSWORD` in `.env` (see `DEPLOYMENT.md`). Additional staff accounts (e.g. electricians) are added afterward through the Users page, never seeded. On this Latin Electrical deployment specifically: `patelnisha107070@gmail.com` (super-admin) and `pateljasmin268@gmail.com` (electrician, added via the Users UI after initial setup) — password `123456`, change in production.
+`UserSeeder` seeds exactly one account per deployment — the super-admin — from `ADMIN_NAME`/`ADMIN_EMAIL`/`ADMIN_PASSWORD` in `.env` (see `DEPLOYMENT.md`). Additional staff accounts (e.g. electricians) are added afterward through the Users page, never seeded. On this Latin Electrical deployment specifically: `<admin-email>` (super-admin) and `<electrician-email>` (electrician, added via the Users UI after initial setup) — credentials are set per-deployment in `.env`/the Users UI, never committed here.
 
 ## Modules / features (current)
 

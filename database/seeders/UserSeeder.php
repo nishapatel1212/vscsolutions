@@ -27,6 +27,10 @@ class UserSeeder extends Seeder
             return;
         }
 
+        if (strlen($password) < 12) {
+            throw new \RuntimeException('ADMIN_PASSWORD must be at least 12 characters — set a strong password in .env before seeding.');
+        }
+
         $user = User::firstOrCreate(
             ['email' => $email],
             [

@@ -109,7 +109,7 @@ class SafetyCheckReportController extends Controller
                 // Check if image exists for this row
                 if (isset($fault_arr['image']) && $fault_arr['image']) {
                     $file = $fault_arr['image'];
-                    $imageName = time() . '_' . $index . '_' . $file->getClientOriginalName();
+                    $imageName = time() . '_' . $index . '.' . $file->getClientOriginalExtension();
                     $file->storeAs('fault_images/' . $report->id, $imageName, 'public');
                     $imagePath = 'fault_images/' . $report->id . $imageName;
                 }
@@ -209,7 +209,7 @@ class SafetyCheckReportController extends Controller
 
                 if (isset($d['image']) && $d['image'] instanceof \Illuminate\Http\UploadedFile) {
                     $file = $d['image'];
-                    $imageName = time() . '_' . $index . '_' . $file->getClientOriginalName();
+                    $imageName = time() . '_' . $index . '.' . $file->getClientOriginalExtension();
                     $file->storeAs('fault_images/' . $id, $imageName, 'public');
                     $imagePath = 'fault_images/' . $id . $imageName;
                 }

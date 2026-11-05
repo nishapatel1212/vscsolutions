@@ -34,6 +34,12 @@ class CompanySetup extends Command
             return self::FAILURE;
         }
 
+        if (strlen(env('ADMIN_PASSWORD')) < 12) {
+            $this->error('ADMIN_PASSWORD must be at least 12 characters. Set a strong password in .env before running company:setup.');
+
+            return self::FAILURE;
+        }
+
         $this->info('Setting up ' . env('CLIENT_NAME', 'this client') . '...');
 
         if ($this->option('fresh')) {

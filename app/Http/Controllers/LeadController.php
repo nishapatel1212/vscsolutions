@@ -14,6 +14,16 @@ class LeadController extends Controller
      */
     public function store(Request $request)
     {
+        // Honeypot: a hidden field real visitors never fill in. Bots that
+        // auto-fill every field trip this; pretend to succeed so they don't
+        // learn to avoid it.
+        if ($request->filled('website')) {
+            return response()->json([
+                'success' => true,
+                'message' => "Thanks, we've received your inquiry and will be in touch shortly.",
+            ], 201);
+        }
+
         $validated = validator($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
