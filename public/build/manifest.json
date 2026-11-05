@@ -1,0 +1,22 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-C11kZmq2.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BiRlH_XB.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-C11kZmq2.css"
+    ]
+  },
+  "resources/js/dashboard-react.jsx": {
+    "file": "assets/dashboard-react-BsCkiS3A.js",
+    "name": "dashboard-react",
+    "src": "resources/js/dashboard-react.jsx",
+    "isEntry": true
+  }
+}
